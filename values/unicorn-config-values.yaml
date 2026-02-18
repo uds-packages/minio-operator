@@ -1,6 +1,6 @@
 # Copyright 2024 Defense Unicorns
 # SPDX-License-Identifier: AGPL-3.0-or-later OR LicenseRef-Defense-Unicorns-Commercial
 
-# renovate: datasource=docker depName=quay.io/rfcurated/minio/mc versioning=regex:^RELEASE\.(?<major>\d+)-(?<minor>\d+)-(?<patch>\d+)T(?<build>\d+)-(?<revision>\d+)-\d+Z.*$
-mcImage: quay.io/rfcurated/minio/mc:RELEASE.2025-07-21T05-28-08Z-jammy-scratch-fips-rfcurated
+# renovate: datasource=docker depName=quay.io/rfcurated/minio/mc versioning=regex:^RELEASE\.(?<major>\d+)-(?<minor>\d+)-(?<patch>\d+)T(?<build>\d+)-(?<revision>\d+)-\d+Z-jammy-scratch-fips-rfcurated$
+mcImage: quay.io/rfcurated/minio/mc:RELEASE.2025-08-13T08-35-41Z-jammy-scratch-fips-rfcurated
 mcShell: /bin/bash

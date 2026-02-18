@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-As [UDS Software Factory](https://github.com/defenseunicorns/uds-package-minio-operator) has not yet reached v1.0.0, only the current latest minor release is supported.
+As [UDS Software Factory](https://github.com/uds-packages/minio-operator) has not yet reached v1.0.0, only the current latest minor release is supported.
 
 ## Reporting a Vulnerability
 

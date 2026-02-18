@@ -5,5 +5,5 @@ tenant:
   image:
     repository: registry1.dso.mil/ironbank/opensource/minio/minio
     # renovate: datasource=docker depName=registry1.dso.mil/ironbank/opensource/minio/minio versioning=regex:^RELEASE\.(?<major>\d+)-(?<minor>\d+)-(?<patch>\d+)T(?<build>\d+)-(?<revision>\d+)-\d+Z$
-    tag: RELEASE.2025-07-23T15-54-02Z
+    tag: RELEASE.2025-10-15T17-29-55Z
     pullPolicy: IfNotPresent

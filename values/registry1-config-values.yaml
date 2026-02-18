@@ -2,5 +2,5 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later OR LicenseRef-Defense-Unicorns-Commercial
 
 # renovate: datasource=docker depName=registry1.dso.mil/ironbank/opensource/minio/mc versioning=regex:^RELEASE\.(?<major>\d+)-(?<minor>\d+)-(?<patch>\d+)T(?<build>\d+)-(?<revision>\d+)-\d+Z$
-mcImage: registry1.dso.mil/ironbank/opensource/minio/mc:RELEASE.2025-07-21T05-28-08Z
+mcImage: registry1.dso.mil/ironbank/opensource/minio/mc:RELEASE.2025-08-13T08-35-41Z
 mcShell: /bin/sh
