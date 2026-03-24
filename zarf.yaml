@@ -38,11 +38,13 @@ components:
         valuesFiles:
           - values/upstream-tenant-values.yaml
     images:
+      - cgr.dev/chainguard/minio:latest
       - quay.io/minio/operator:v7.1.1
       - quay.io/minio/operator-sidecar:v7.1.0
-      # minio RELEASE regex: https://regex101.com/r/Xc6mrh/1
+      # # minio RELEASE regex: https://regex101.com/r/Xc6mrh/1
       - minio/mc:RELEASE.2025-08-13T08-35-41Z # renovate: versioning=regex:^RELEASE\.(?<major>\d+)-(?<minor>\d+)-(?<patch>\d+)T(?<build>\d+)-(?<revision>\d+)-\d+Z$
-      - quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z # renovate: versioning=regex:^RELEASE\.(?<major>\d+)-(?<minor>\d+)-(?<patch>\d+)T(?<build>\d+)-(?<revision>\d+)-\d+Z$
+      # - quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z # renovate: versioning=regex:^RELEASE\.(?<major>\d+)-(?<minor>\d+)-(?<patch>\d+)T(?<build>\d+)-(?<revision>\d+)-\d+Z$
+      # - localhost:5000/minio-fork:latest
 
   - name: minio-operator
     required: true
