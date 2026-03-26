@@ -11,8 +11,8 @@ spec:
     spec:
       containers:
         - name: minio-client
-          image: minio/mc
-          command: ["/bin/sh", "-c"]
+          image: cgr.dev/chainguard/minio-client
+          command: ["/bin/bash", "-c"]
           args:
             - |
               BN="mc-cli-test-bucket"

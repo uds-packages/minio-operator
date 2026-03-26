@@ -3,4 +3,4 @@
 
 # renovate: datasource=docker depName=minio/mc versioning=regex:^RELEASE\.(?<major>\d+)-(?<minor>\d+)-(?<patch>\d+)T(?<build>\d+)-(?<revision>\d+)-\d+Z$
 mcImage: cgr.dev/chainguard/minio-client:latest
-mcShell: /bin/sh
+mcShell: /bin/bash

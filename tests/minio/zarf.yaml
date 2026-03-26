@@ -25,4 +25,4 @@ components:
           - mc-cli-test.yaml
           - mc-cli-policy.yaml
     images:
-      - minio/mc:latest
+      - cgr.dev/chainguard/minio-client:latest
