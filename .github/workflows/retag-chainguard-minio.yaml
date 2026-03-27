@@ -1,0 +1,91 @@
+name: Retag Minio Images
+
+on:
+  schedule:
+    - cron: '0 14 * * *' # daily at 8 AM Central
+  workflow_dispatch: # manual trigger for testing
+
+jobs:
+  retag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        image:
+          - source: cgr.dev/chainguard/minio-client:latest
+            dest: ghcr.io/uds-packages/chainguard-minio-client
+          - source: cgr.dev/chainguard/minio:latest
+            dest: ghcr.io/uds-packages/chainguard-minio
+
+    steps:
+      - name: Install UDS CLI
+        uses: defenseunicorns/setup-uds@ab842abcad1f7a3305c2538e3dd1950d0daacfa5 # v1.0.1
+        with:
+          # renovate: datasource=github-tags depName=defenseunicorns/uds-cli versioning=semver
+          version: v0.28.4
+
+      - name: GHCR Login
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "${{ env.GH_TOKEN }}" | uds zarf tools registry login -u "dummy" --password-stdin ghcr.io
+        shell: bash
+
+      - name: Get latest release tag from chainguard-forks/minio
+        id: release
+        run: |
+          TAG=$(gh release view --repo chainguard-forks/minio --json tagName -q '.tagName')
+          echo "Latest release tag: ${TAG}"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check if image digest has changed
+        id: check
+        run: |
+          SOURCE="${{ matrix.image.source }}"
+          DEST="${{ matrix.image.dest }}"
+          TAG="${{ steps.release.outputs.tag }}"
+
+          SOURCE_DIGEST=$(uds zarf tools registry digest ${SOURCE})
+          echo "Source digest: ${SOURCE_DIGEST}"
+
+          # Check if the base release tag already exists with the same digest
+          CURRENT_DIGEST=$(uds zarf tools registry digest ${DEST}:${TAG} 2>/dev/null || echo "none")
+          echo "Current GHCR digest for ${TAG}: ${CURRENT_DIGEST}"
+
+          if [ "${SOURCE_DIGEST}" = "${CURRENT_DIGEST}" ]; then
+            echo "Tag ${TAG} already exists with same digest, skipping"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Change detected, finding next available tag"
+
+            # Find the next available tag — handles Chainguard rebuilds without a new fork release
+            FINAL_TAG="${TAG}"
+            INCREMENT=2
+            MAX_INCREMENT=10
+            while uds zarf tools registry digest ${DEST}:${FINAL_TAG} 2>/dev/null; do
+              if [ "${INCREMENT}" -gt "${MAX_INCREMENT}" ]; then
+                echo "Exceeded maximum increment of ${MAX_INCREMENT} for tag ${TAG}, manual intervention required"
+                exit 1
+              fi
+              FINAL_TAG="${TAG}-${INCREMENT}"
+              INCREMENT=$((INCREMENT + 1))
+            done
+
+            echo "Final tag: ${FINAL_TAG}"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "final_tag=${FINAL_TAG}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Retag and push
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          SOURCE="${{ matrix.image.source }}"
+          DEST="${{ matrix.image.dest }}"
+          FINAL_TAG="${{ steps.check.outputs.final_tag }}"
+
+          uds zarf tools registry copy ${SOURCE} ${DEST}:${FINAL_TAG}
+
+          echo "Pushed ${DEST}:${FINAL_TAG}"
