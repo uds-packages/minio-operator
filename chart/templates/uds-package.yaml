@@ -28,5 +28,5 @@ spec:
 
       - direction: Egress
         selector:
-          app.kubernetes.io/name: operator 
+          app.kubernetes.io/name: operator
         remoteGenerated: KubeAPI

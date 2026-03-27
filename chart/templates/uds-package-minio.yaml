@@ -7,7 +7,7 @@ metadata:
   name: minio
   namespace: minio
 spec:
-  monitor: 
+  monitor:
     - selector:
         v1.min.io/tenant: {{ .Values.name }}
       portName: minio-port
@@ -72,7 +72,7 @@ spec:
       {{- end }}
 
 
-      # App specific netpols  
+      # App specific netpols
       {{- range .Values.apps }}
       - direction: Ingress
         selector:
@@ -94,8 +94,10 @@ spec:
           {{ .selector | toYaml | nindent 10 }}
         {{- if not .remoteGenerated }}
         remoteNamespace: {{ .remoteNamespace }}
+        {{- if .remoteSelector }}
         remoteSelector:
           {{ .remoteSelector | toYaml | nindent 10 }}
+        {{- end }}
         port: {{ .port }}
         {{- else }}
         remoteGenerated: {{ .remoteGenerated }}
