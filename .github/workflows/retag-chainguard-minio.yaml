@@ -1,6 +1,9 @@
 name: Retag Minio Images
 
 on:
+  push:
+    branches: 
+      - retag-chainguard-latest
   schedule:
     - cron: '0 14 * * *' # daily at 8 AM Central
   workflow_dispatch: # manual trigger for testing
@@ -15,9 +18,9 @@ jobs:
       matrix:
         image:
           - source: cgr.dev/chainguard/minio-client:latest
-            destination: ghcr.io/uds-packages/chainguard-minio-client
-          - source: cgr.dev/chainguard/minio:latest
-            destination: ghcr.io/uds-packages/chainguard-minio
+            destination: ghcr.io/uds-packages/minio-operator/images/chainguard-minio-client
+          # - source: cgr.dev/chainguard/minio:latest
+          #   destination: ghcr.io/uds-packages/minio-operator/images/chainguard-minio
 
     steps:
       - name: Install UDS CLI
