@@ -1,8 +1,16 @@
+# Copyright 2024 Defense Unicorns
+# SPDX-License-Identifier: AGPL-3.0-or-later OR LicenseRef-Defense-Unicorns-Commercial
+
 name: Retag Minio Images
+      # Pulls the latest tag for chainguard-forks/minio
+      # Pulls the latest tag for ghcr.io/uds-packages/minio-operator/container/chainguard-minio[-client]
+      # fork_tag == uds_package_image_tag + same digest → no change
+      # fork_tag == uds_package_image_tag + different digest → exit 1 manual intervention
+      # fork_tag != uds_package_image_tag → copy chainguard:latest/retag and push
 
 on:
   push:
-    branches: 
+    branches:
       - retag-chainguard-latest
   schedule:
     - cron: '0 14 * * *' # daily at 8 AM Central
@@ -18,9 +26,9 @@ jobs:
       matrix:
         image:
           - source: cgr.dev/chainguard/minio-client:latest
-            destination: ghcr.io/uds-packages/minio-operator/images/chainguard-minio-client
-          # - source: cgr.dev/chainguard/minio:latest
-          #   destination: ghcr.io/uds-packages/minio-operator/images/chainguard-minio
+            destination: ghcr.io/uds-packages/minio-operator/container/chainguard-minio-client
+          - source: cgr.dev/chainguard/minio:latest
+            destination: ghcr.io/uds-packages/minio-operator/container/chainguard-minio
 
     steps:
       - name: Install UDS CLI
