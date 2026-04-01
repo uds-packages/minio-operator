@@ -25,4 +25,3 @@ spec:
         remoteSelector:
           v1.min.io/tenant: uds-minio
         description: "Egress from minio test job to MinIO"
-
