@@ -84,9 +84,9 @@ This package facilitates the ability to provision multiple sets of buckets for a
         uds-minio-config:
           values:
             # Helm overrides to proviion resources in the minio tenant
-            - path: apps 
+            - path: apps
               value:
-                # a list of resources can be provided here in the following format. 
+                # a list of resources can be provided here in the following format.
                 - name: mc-cli # App name.
                   # The following three fields are used to create an ingress rule into the minio tenant for your app
                   user: mc-cli # "Access Key ID" for the scoped credential. Note: this cannot be reused and cannot be the same as the root minio credential.
