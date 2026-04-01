@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later OR LicenseRef-Defense-Unicorns-Commercial
 
 name: Retag Minio Images
-      # Pulls the latest tag for chainguard-forks/minio
-      # Pulls the latest tag for ghcr.io/uds-packages/minio-operator/container/chainguard-minio[-client]
-      # fork_tag == uds_package_image_tag + same digest → no change
-      # fork_tag == uds_package_image_tag + different digest → exit 1 manual intervention
-      # fork_tag != uds_package_image_tag → copy chainguard:latest/retag and push
+      # Scans Chainguard sboms for wolfi apk version for latest image tag
+      # Pulls the latest tag for ghcr.io/uds-packages/minio-operator/container/chainguard-minio[client]
+      # CHAINGUARD_APK_TAG == uds_package_image_tag + same digest → no change
+      # CHAINGUARD_APK_TAG == uds_package_image_tag + different digest → repush with same tag (Chainguard rebuilt image)
+      # CHAINGUARD_APK_TAG != uds_package_image_tag → copy chainguard:latest/retag and push
 
 on:
   push:
@@ -27,8 +27,10 @@ jobs:
         image:
           - source: cgr.dev/chainguard/minio-client:latest
             destination: ghcr.io/uds-packages/minio-operator/container/chainguard-minio-client
+            sbom_package: mc
           - source: cgr.dev/chainguard/minio:latest
             destination: ghcr.io/uds-packages/minio-operator/container/chainguard-minio
+            sbom_package: minio
 
     steps:
       - name: Install UDS CLI
@@ -43,20 +45,19 @@ jobs:
         run: echo "${{ env.GH_TOKEN }}" | uds zarf tools registry login -u "dummy" --password-stdin ghcr.io
         shell: bash
 
-      - name: Get latest release tag from chainguard-forks/minio
-        id: fork_release
+      - name: Get version from Chainguard image SBOM
+        id: chainguard_apk_version
         run: |
-          FORK_TAG=$(gh release view --repo chainguard-forks/minio --json tagName -q '.tagName')
-          echo "Latest fork release tag: ${FORK_TAG}"
-          echo "fork_tag=${FORK_TAG}" >> "$GITHUB_OUTPUT"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CHAINGUARD_APK_TAG=$(uds zarf tools sbom scan ${{ matrix.image.source }} -o spdx-json 2>/dev/null | \
+            jq -r '.packages[] | select(.name == "${{ matrix.image.sbom_package }}" and .supplier == "Person: wolfi") | .versionInfo')
+          echo "SBOM Wolfi APK version: ${CHAINGUARD_APK_TAG}"
+          echo "chainguard_apk_tag=${CHAINGUARD_APK_TAG}" >> "$GITHUB_OUTPUT"
 
       - name: Get latest tag from destination image
         id: uds_package_image_tag
         run: |
           DESTINATION="${{ matrix.image.destination }}"
-          UDS_PACKAGE_IMAGE_TAG=$(uds zarf tools registry ls ${DESTINATION} 2>/dev/null | sort | tail -n 1 || echo "none")
+          UDS_PACKAGE_IMAGE_TAG=$(uds zarf tools registry ls ${DESTINATION} 2>/dev/null | grep -v "ERR\|GET\|NAME_UNKNOWN" | sort -V | tail -n 1)
           echo "Latest destination tag: ${UDS_PACKAGE_IMAGE_TAG}"
           echo "uds_package_image_tag=${UDS_PACKAGE_IMAGE_TAG}" >> "$GITHUB_OUTPUT"
 
@@ -64,10 +65,10 @@ jobs:
         run: |
           SOURCE="${{ matrix.image.source }}"
           DESTINATION="${{ matrix.image.destination }}"
-          FORK_TAG="${{ steps.fork_release.outputs.fork_tag }}"
+          CHAINGUARD_APK_TAG="${{ steps.chainguard_apk_version.outputs.chainguard_apk_tag }}"
           UDS_PACKAGE_IMAGE_TAG="${{ steps.uds_package_image_tag.outputs.uds_package_image_tag }}"
 
-          if [ "${FORK_TAG}" = "${UDS_PACKAGE_IMAGE_TAG}" ]; then
+          if [ "${CHAINGUARD_APK_TAG}" = "${UDS_PACKAGE_IMAGE_TAG}" ]; then
             SOURCE_DIGEST=$(uds zarf tools registry digest ${SOURCE})
             echo "Source digest: ${SOURCE_DIGEST}"
 
@@ -75,13 +76,14 @@ jobs:
             echo "Destination digest: ${DESTINATION_DIGEST}"
 
             if [ "${SOURCE_DIGEST}" = "${DESTINATION_DIGEST}" ]; then
-              echo "Tag ${FORK_TAG} exists with matching digest, no change needed"
+              echo "Tag ${CHAINGUARD_APK_TAG} exists with matching digest, no change needed"
             else
-              echo "Tag ${FORK_TAG} exists but digest differs, manual intervention required"
-              exit 1
+              echo "Tag ${CHAINGUARD_APK_TAG} exists with new digest, repushing image"
+              uds zarf tools registry copy ${SOURCE} ${DESTINATION}:${CHAINGUARD_APK_TAG}
+              echo "Pushed ${DESTINATION}:${CHAINGUARD_APK_TAG}"
             fi
           else
-            echo "New fork release ${FORK_TAG} detected, copying image"
-            uds zarf tools registry copy ${SOURCE} ${DESTINATION}:${FORK_TAG}
-            echo "Pushed ${DESTINATION}:${FORK_TAG}"
+            echo "New Chainguard APK version ${CHAINGUARD_APK_TAG} detected, copying image"
+            uds zarf tools registry copy ${SOURCE} ${DESTINATION}:${CHAINGUARD_APK_TAG}
+            echo "Pushed ${DESTINATION}:${CHAINGUARD_APK_TAG}"
           fi
