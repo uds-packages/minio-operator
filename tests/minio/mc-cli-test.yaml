@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
         - name: minio-client
-          image: cgr.dev/chainguard/minio-client
+          image: ghcr.io/uds-packages/minio-operator/container/chainguard-minio-client
           command: ["/bin/bash", "-c"]
           args:
             - |

@@ -41,8 +41,8 @@ components:
       - quay.io/minio/operator:v7.1.1
       - quay.io/minio/operator-sidecar:v7.1.0
       # # minio RELEASE regex: https://regex101.com/r/Xc6mrh/1
-      - cgr.dev/chainguard/minio-client:latest
-      - cgr.dev/chainguard/minio:latest
+      - ghcr.io/uds-packages/minio-operator/container/chainguard-minio-client:0.20250813.083541-r8
+      - ghcr.io/uds-packages/minio-operator/container/chainguard-minio:0.20260330.001845-r0
 
   - name: minio-operator
     required: true
