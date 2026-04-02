@@ -13,7 +13,15 @@ spec:
     allow:
       - direction: Egress
         selector:
+          job-name: minio-policy-job
         remoteNamespace: minio
         remoteSelector:
           v1.min.io/tenant: uds-minio
-        description: "Egress from minio CLI (for tests)"
+        description: "Egress from minio policy job to MinIO"
+      - direction: Egress
+        selector:
+          job-name: minio-test-job
+        remoteNamespace: minio
+        remoteSelector:
+          v1.min.io/tenant: uds-minio
+        description: "Egress from minio test job to MinIO"
