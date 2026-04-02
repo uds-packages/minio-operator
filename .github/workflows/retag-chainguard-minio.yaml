@@ -1,0 +1,85 @@
+# Copyright 2024 Defense Unicorns
+# SPDX-License-Identifier: AGPL-3.0-or-later OR LicenseRef-Defense-Unicorns-Commercial
+
+name: Retag Minio Images
+      # Scans Chainguard sboms for wolfi apk version for latest image tag
+      # Pulls the latest tag for ghcr.io/uds-packages/minio-operator/container/chainguard-minio[client]
+      # CHAINGUARD_APK_TAG == uds_package_image_tag + same digest → no change
+      # CHAINGUARD_APK_TAG == uds_package_image_tag + different digest → repush with same tag (Chainguard rebuilt image)
+      # CHAINGUARD_APK_TAG != uds_package_image_tag → copy chainguard:latest/retag and push
+
+on:
+  schedule:
+    - cron: '0 14 * * *' # daily at 8 AM Central
+
+jobs:
+  retag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        image:
+          - source: cgr.dev/chainguard/minio-client:latest
+            destination: ghcr.io/uds-packages/minio-operator/container/chainguard-minio-client
+            sbom_package: mc
+          - source: cgr.dev/chainguard/minio:latest
+            destination: ghcr.io/uds-packages/minio-operator/container/chainguard-minio
+            sbom_package: minio
+
+    steps:
+      - name: Install UDS CLI
+        uses: defenseunicorns/setup-uds@ab842abcad1f7a3305c2538e3dd1950d0daacfa5 # v1.0.1
+        with:
+          # renovate: datasource=github-tags depName=defenseunicorns/uds-cli versioning=semver
+          version: v0.30.0
+
+      - name: GHCR Login
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "${{ env.GH_TOKEN }}" | uds zarf tools registry login -u "dummy" --password-stdin ghcr.io
+        shell: bash
+
+      - name: Get version from Chainguard image SBOM
+        id: chainguard_apk_version
+        run: |
+          CHAINGUARD_APK_TAG=$(uds zarf tools sbom scan ${{ matrix.image.source }} -o spdx-json 2>/dev/null | \
+            jq -r '.packages[] | select(.name == "${{ matrix.image.sbom_package }}" and .supplier == "Person: wolfi") | .versionInfo')
+          echo "SBOM Wolfi APK version: ${CHAINGUARD_APK_TAG}"
+          echo "chainguard_apk_tag=${CHAINGUARD_APK_TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Get latest tag from destination image
+        id: uds_package_image_tag
+        run: |
+          DESTINATION="${{ matrix.image.destination }}"
+          UDS_PACKAGE_IMAGE_TAG=$(uds zarf tools registry ls ${DESTINATION} 2>/dev/null | grep -v "ERR\|GET\|NAME_UNKNOWN" | sort -V | tail -n 1)
+          echo "Latest destination tag: ${UDS_PACKAGE_IMAGE_TAG}"
+          echo "uds_package_image_tag=${UDS_PACKAGE_IMAGE_TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Check digest and retag if needed
+        run: |
+          SOURCE="${{ matrix.image.source }}"
+          DESTINATION="${{ matrix.image.destination }}"
+          CHAINGUARD_APK_TAG="${{ steps.chainguard_apk_version.outputs.chainguard_apk_tag }}"
+          UDS_PACKAGE_IMAGE_TAG="${{ steps.uds_package_image_tag.outputs.uds_package_image_tag }}"
+
+          if [ "${CHAINGUARD_APK_TAG}" = "${UDS_PACKAGE_IMAGE_TAG}" ]; then
+            SOURCE_DIGEST=$(uds zarf tools registry digest ${SOURCE})
+            echo "Source digest: ${SOURCE_DIGEST}"
+
+            DESTINATION_DIGEST=$(uds zarf tools registry digest ${DESTINATION}:${UDS_PACKAGE_IMAGE_TAG})
+            echo "Destination digest: ${DESTINATION_DIGEST}"
+
+            if [ "${SOURCE_DIGEST}" = "${DESTINATION_DIGEST}" ]; then
+              echo "Tag ${CHAINGUARD_APK_TAG} exists with matching digest, no change needed"
+            else
+              echo "Tag ${CHAINGUARD_APK_TAG} exists with new digest, repushing image"
+              uds zarf tools registry copy ${SOURCE} ${DESTINATION}:${CHAINGUARD_APK_TAG}
+              echo "Pushed ${DESTINATION}:${CHAINGUARD_APK_TAG}"
+            fi
+          else
+            echo "New Chainguard APK version ${CHAINGUARD_APK_TAG} detected, copying image"
+            uds zarf tools registry copy ${SOURCE} ${DESTINATION}:${CHAINGUARD_APK_TAG}
+            echo "Pushed ${DESTINATION}:${CHAINGUARD_APK_TAG}"
+          fi
