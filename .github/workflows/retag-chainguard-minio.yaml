@@ -3,6 +3,7 @@
 
 name: Retag Minio Images
       # Scans Chainguard sboms for wolfi apk version for latest image tag
+      # This is done with on cgr and registry1
       # Pulls the latest tag for ghcr.io/uds-packages/minio-operator/container/chainguard-minio[client]
       # CHAINGUARD_APK_TAG == uds_package_image_tag + same digest → no change
       # CHAINGUARD_APK_TAG == uds_package_image_tag + different digest → repush with same tag (Chainguard rebuilt image)
@@ -19,6 +20,9 @@ on:
 jobs:
   retag:
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
     permissions:
       contents: read
       packages: write
@@ -47,7 +51,6 @@ jobs:
 
       - name: Environment setup
         run: |
-            echo "MARU_AUTH=\"{\"raw.githubusercontent.com\": \"${{ secrets.GITHUB_TOKEN }}\"}\"" >> "GITHUB_ENV"
             uds run actions:setup-environment \
             --set REGISTRY1_USERNAME="${{ secrets.IRON_BANK_ROBOT_USERNAME }}" \
             --set REGISTRY1_PASSWORD="${{ secrets.IRON_BANK_ROBOT_PASSWORD }}" \
