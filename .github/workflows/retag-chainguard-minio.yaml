@@ -9,8 +9,12 @@ name: Retag Minio Images
       # CHAINGUARD_APK_TAG != uds_package_image_tag → copy chainguard:latest/retag and push
 
 on:
+  push:
+    branches:
+      - retag-registry1-latest  
   schedule:
     - cron: '0 14 * * *' # daily at 8 AM Central
+  workflow_dispatch: # manual trigger for testing
 
 jobs:
   retag:
@@ -21,11 +25,17 @@ jobs:
     strategy:
       matrix:
         image:
-          - source: cgr.dev/chainguard/minio-client:latest
-            destination: ghcr.io/uds-packages/minio-operator/container/chainguard-minio-client
+          # - source: cgr.dev/chainguard/minio-client:latest
+          #   destination: ghcr.io/uds-packages/minio-operator/container/chainguard-minio-client
+          #   sbom_package: mc
+          # - source: cgr.dev/chainguard/minio:latest
+          #   destination: ghcr.io/uds-packages/minio-operator/container/chainguard-minio
+          #   sbom_package: minio
+          - source: registry1.dso.mil/chainguard/cgr.dev/chainguard/minio-client:latest
+            destination: ghcr.io/uds-packages/minio-operator/container/registry1-chainguard-minio-client
             sbom_package: mc
-          - source: cgr.dev/chainguard/minio:latest
-            destination: ghcr.io/uds-packages/minio-operator/container/chainguard-minio
+          - source: registry1.dso.mil/chainguard/cgr.dev/chainguard/minio:latest
+            destination: ghcr.io/uds-packages/minio-operator/container/registry1-chainguard-minio
             sbom_package: minio
 
     steps:
@@ -35,10 +45,12 @@ jobs:
           # renovate: datasource=github-tags depName=defenseunicorns/uds-cli versioning=semver
           version: v0.30.0
 
-      - name: GHCR Login
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: echo "${{ env.GH_TOKEN }}" | uds zarf tools registry login -u "dummy" --password-stdin ghcr.io
+      - name: Environment setup
+        run: |
+            uds run actions:setup-environment \
+            --set REGISTRY1_USERNAME="${{ secrets.IRON_BANK_ROBOT_USERNAME }}" \
+            --set REGISTRY1_PASSWORD="${{ secrets.IRON_BANK_ROBOT_PASSWORD }}" \
+            --set GH_TOKEN="${{ secrets.GITHUB_TOKEN }}" \
         shell: bash
 
       - name: Get version from Chainguard image SBOM
