@@ -35,7 +35,7 @@ jobs:
           # - source: registry1.dso.mil/chainguard/cgr.dev/chainguard/minio-client:latest
           #   destination: ghcr.io/uds-packages/minio-operator/container/registry1-chainguard-minio-client
           #   sbom_package: mc
-          - source: registry1.dso.mil/ironbank/opensource/minio/minio:RELEASE.2025-10-15T17-29-55Z
+          - source: registry1.dso.mil/chainguard/cgr.dev/chainguard/minio-client:latest
             destination: ghcr.io/uds-packages/minio-operator/container/registry1-chainguard-minio
             sbom_package: minio
 
@@ -60,42 +60,42 @@ jobs:
       - name: Get version from Chainguard image SBOM
         id: chainguard_apk_version
         run: |
-          CHAINGUARD_APK_TAG=$(uds zarf tools sbom scan ${{ matrix.image.source }} -o spdx-json 2>/dev/null | \
+          CHAINGUARD_APK_TAG=$(uds zarf tools sbom scan ${{ matrix.image.source }} -o spdx-json | \
             jq -r '.packages[] | select(.name == "${{ matrix.image.sbom_package }}" and .supplier == "Person: wolfi") | .versionInfo')
           echo "SBOM Wolfi APK version: ${CHAINGUARD_APK_TAG}"
           echo "chainguard_apk_tag=${CHAINGUARD_APK_TAG}" >> "$GITHUB_OUTPUT"
 
-      # - name: Get latest tag from destination image
-      #   id: uds_package_image_tag
-      #   run: |
-      #     DESTINATION="${{ matrix.image.destination }}"
-      #     UDS_PACKAGE_IMAGE_TAG=$(uds zarf tools registry ls ${DESTINATION} 2>/dev/null | grep -v "ERR\|GET\|NAME_UNKNOWN" | sort -V | tail -n 1)
-      #     echo "Latest destination tag: ${UDS_PACKAGE_IMAGE_TAG}"
-      #     echo "uds_package_image_tag=${UDS_PACKAGE_IMAGE_TAG}" >> "$GITHUB_OUTPUT"
+      - name: Get latest tag from destination image
+        id: uds_package_image_tag
+        run: |
+          DESTINATION="${{ matrix.image.destination }}"
+          UDS_PACKAGE_IMAGE_TAG=$(uds zarf tools registry ls ${DESTINATION} 2>/dev/null | grep -v "ERR\|GET\|NAME_UNKNOWN" | sort -V | tail -n 1)
+          echo "Latest destination tag: ${UDS_PACKAGE_IMAGE_TAG}"
+          echo "uds_package_image_tag=${UDS_PACKAGE_IMAGE_TAG}" >> "$GITHUB_OUTPUT"
 
-      # - name: Check digest and retag if needed
-      #   run: |
-      #     SOURCE="${{ matrix.image.source }}"
-      #     DESTINATION="${{ matrix.image.destination }}"
-      #     CHAINGUARD_APK_TAG="${{ steps.chainguard_apk_version.outputs.chainguard_apk_tag }}"
-      #     UDS_PACKAGE_IMAGE_TAG="${{ steps.uds_package_image_tag.outputs.uds_package_image_tag }}"
+      - name: Check digest and retag if needed
+        run: |
+          SOURCE="${{ matrix.image.source }}"
+          DESTINATION="${{ matrix.image.destination }}"
+          CHAINGUARD_APK_TAG="${{ steps.chainguard_apk_version.outputs.chainguard_apk_tag }}"
+          UDS_PACKAGE_IMAGE_TAG="${{ steps.uds_package_image_tag.outputs.uds_package_image_tag }}"
 
-      #     if [ "${CHAINGUARD_APK_TAG}" = "${UDS_PACKAGE_IMAGE_TAG}" ]; then
-      #       SOURCE_DIGEST=$(uds zarf tools registry digest ${SOURCE})
-      #       echo "Source digest: ${SOURCE_DIGEST}"
+          if [ "${CHAINGUARD_APK_TAG}" = "${UDS_PACKAGE_IMAGE_TAG}" ]; then
+            SOURCE_DIGEST=$(uds zarf tools registry digest ${SOURCE})
+            echo "Source digest: ${SOURCE_DIGEST}"
 
-      #       DESTINATION_DIGEST=$(uds zarf tools registry digest ${DESTINATION}:${UDS_PACKAGE_IMAGE_TAG})
-      #       echo "Destination digest: ${DESTINATION_DIGEST}"
+            DESTINATION_DIGEST=$(uds zarf tools registry digest ${DESTINATION}:${UDS_PACKAGE_IMAGE_TAG})
+            echo "Destination digest: ${DESTINATION_DIGEST}"
 
-      #       if [ "${SOURCE_DIGEST}" = "${DESTINATION_DIGEST}" ]; then
-      #         echo "Tag ${CHAINGUARD_APK_TAG} exists with matching digest, no change needed"
-      #       else
-      #         echo "Tag ${CHAINGUARD_APK_TAG} exists with new digest, repushing image"
-      #         uds zarf tools registry copy ${SOURCE} ${DESTINATION}:${CHAINGUARD_APK_TAG}
-      #         echo "Pushed ${DESTINATION}:${CHAINGUARD_APK_TAG}"
-      #       fi
-      #     else
-      #       echo "New Chainguard APK version ${CHAINGUARD_APK_TAG} detected, copying image"
-      #       uds zarf tools registry copy ${SOURCE} ${DESTINATION}:${CHAINGUARD_APK_TAG}
-      #       echo "Pushed ${DESTINATION}:${CHAINGUARD_APK_TAG}"
-      #     fi
+            if [ "${SOURCE_DIGEST}" = "${DESTINATION_DIGEST}" ]; then
+              echo "Tag ${CHAINGUARD_APK_TAG} exists with matching digest, no change needed"
+            else
+              echo "Tag ${CHAINGUARD_APK_TAG} exists with new digest, repushing image"
+              uds zarf tools registry copy ${SOURCE} ${DESTINATION}:${CHAINGUARD_APK_TAG}
+              echo "Pushed ${DESTINATION}:${CHAINGUARD_APK_TAG}"
+            fi
+          else
+            echo "New Chainguard APK version ${CHAINGUARD_APK_TAG} detected, copying image"
+            uds zarf tools registry copy ${SOURCE} ${DESTINATION}:${CHAINGUARD_APK_TAG}
+            echo "Pushed ${DESTINATION}:${CHAINGUARD_APK_TAG}"
+          fi
