@@ -6,12 +6,6 @@ metadata:
   name: minio-operator
   description: "MinIO provides a powerful and scalable storage solution that can be deployed across private, public, and hybrid clouds using Kubernetes. Users benefit from lightning-fast performance, easy scalability, and seamless hybrid cloud deployments. The UI is simple yet robust, offering a management console for configuring tenants and monitoring clusters. The MinIO Kubernetes Operator simplifies tenant deployments and integrates easily with cloud environments, providing enhanced control and flexibility."
   version: "dev"
-  annotations:
-    dev.uds.title: MinIO Operator
-    dev.uds.tagline: Open Source Object Storage
-    dev.uds.categories: Databases, Kubernetes (K8s), Networking, Software Dev
-    dev.uds.keywords: Object Storage, S3-compatible, Cloud Storage, Kubernetes, Hybrid Cloud
-    dev.uds.icon: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgeG1sbnM6dj0iaHR0cHM6Ly92ZWN0YS5pby9uYW5vIj48cGF0aCBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9Ii4wMSIgZD0iTTEyLDEyaDU2djU2SDEyeiIvPjxwYXRoIGQ9Ik00My45MTYsNjhsLTMuMjk2LTMuMzczVjQ0LjExOWwtMTQuMzQyLDcuMjg2Yy0uMTAzLjAyOS0uMDc0LS4wNTUtLjA3NC0uMTIyLjAwMS0uNjA0LjQ3My0yLjA5MS42NjYtMi43MzIsMi42MjYtOC43MzYsOC45NjMtMTYuMjk5LDE3LjA5NS0yMC4zODV2MTAuNTM3Yy42NTctLjExMSwxLjQwNS0uNjIzLDEuOTE5LTEuMDU4LDIuOTA0LTIuNDYsMy4wODEtNi42MTIuNjg3LTkuNTAyLTIuMjQ0LTIuNzA5LTUuMTM3LTUuMTI3LTcuNDUyLTcuODA1LTQuNTM4LTUuMjUxLDEuOTY3LTEwLjkwMSw2LjQ5My03LjA4OS41NzYuNDg1LDEuMTI2IDEuMTc0LDEuNTUzIDEuNzk0LDIuMzM4IDMuMzk4LDQuMjY1IDcuMjM1LDYuNTMzIDEwLjY5NS4wNTQuMDk2LjE4LjQ3Ni4wMzIuNTA5LS4xMDkuMDI0LS42NTQtLjU1My0uNzYzLS42NjQtMi43NTQtMi44MDgtNS4zNzctNS43NDktOC4xMTQtOC41Ny0uNDE1LS40MjgtMS4zMzQtMS40NTMtMS44MjItMS42NzMtMS42MTctLjcyOS0zLjA2MiwxLjIyOS0xLjg2OCwyLjU1OSAyLjQwMSwyLjY1MSA1LjA2Miw1LjEgNy40NTIsNy43NTYgNC40MjIsNC45MTMgMy40ODgsMTIuMTIzLTIuMjU1LDE1LjQ3LS43NzkuNDU0LTEuNjIxLjc5Ny0yLjM5NiwxLjI1Nkw0My45NjUsNjhoLS4wNDl6TTQwLjYyLDM0LjAyNWMtLjI1LjA4Ny0uNDk5LjMyMS0uNzEyLjQ5NC0zLjUxMSwyLjg0LTYuMzY0LDYuNTc5LTguMzQsMTAuNjM0bDguMDY5LTQuMTFjLjE5My0uMTA2Ljk4My0uNDg1Ljk4My0uNjl2LTYuMzI3eiIgZmlsbD0iI2M2MmQ0OSIvPjwvc3ZnPg==
 
 variables:
   - name: TENANT
@@ -22,71 +16,5 @@ variables:
 components:
 
   - name: minio-operator
-    required: true
-    import:
-      path: common
-    only:
-      flavor: upstream
-    charts:
-      - name: uds-minio-config
-        valuesFiles:
-          - values/upstream-config-values.yaml
-      - name: minio-operator
-        valuesFiles:
-          - values/upstream-values.yaml
-      - name: minio-tenant
-        valuesFiles:
-          - values/upstream-tenant-values.yaml
     images:
-      - quay.io/minio/operator:v7.1.1
-      - quay.io/minio/operator-sidecar:v7.1.0
-      # minio RELEASE regex: https://regex101.com/r/Xc6mrh/1
-      - minio/mc:RELEASE.2025-08-13T08-35-41Z # renovate: versioning=regex:^RELEASE\.(?<major>\d+)-(?<minor>\d+)-(?<patch>\d+)T(?<build>\d+)-(?<revision>\d+)-\d+Z$
-      - quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z # renovate: versioning=regex:^RELEASE\.(?<major>\d+)-(?<minor>\d+)-(?<patch>\d+)T(?<build>\d+)-(?<revision>\d+)-\d+Z$
-
-  - name: minio-operator
-    required: true
-    import:
-      path: common
-    only:
-      flavor: registry1
-      cluster:
-        architecture: amd64
-    charts:
-      - name: uds-minio-config
-        valuesFiles:
-          - values/registry1-config-values.yaml
-      - name: minio-operator
-        valuesFiles:
-          - values/registry1-values.yaml
-      - name: minio-tenant
-        valuesFiles:
-          - values/registry1-tenant-values.yaml
-    images:
-      - registry1.dso.mil/ironbank/opensource/minio/operator:v7.1.1
-      - registry1.dso.mil/ironbank/opensource/minio/operator-sidecar:v7.1.0
-      # minio RELEASE regex: https://regex101.com/r/Xc6mrh/1
-      - registry1.dso.mil/ironbank/opensource/minio/mc:RELEASE.2025-08-13T08-35-41Z # renovate: versioning=regex:^RELEASE\.(?<major>\d+)-(?<minor>\d+)-(?<patch>\d+)T(?<build>\d+)-(?<revision>\d+)-\d+Z$
-      - registry1.dso.mil/ironbank/opensource/minio/minio:RELEASE.2025-10-15T17-29-55Z # renovate: versioning=regex:^RELEASE\.(?<major>\d+)-(?<minor>\d+)-(?<patch>\d+)T(?<build>\d+)-(?<revision>\d+)-\d+Z$
-
-  - name: minio-operator
-    required: true
-    import:
-      path: common
-    only:
-      flavor: unicorn
-    charts:
-      - name: uds-minio-config
-        valuesFiles:
-          - values/unicorn-config-values.yaml
-      - name: minio-operator
-        valuesFiles:
-          - values/unicorn-values.yaml
-      - name: minio-tenant
-        valuesFiles:
-          - values/unicorn-tenant-values.yaml
-    images:
-      - quay.io/rfcurated/minio/operator-sidecar:7.1.1-jammy-scratch-fips-rfcurated
-      - quay.io/rfcurated/minio/operator:7.1.1-jammy-scratch-fips-rfcurated
-      - quay.io/rfcurated/minio/mc:RELEASE.2025-08-13T08-35-41Z-jammy-scratch-fips-rfcurated # renovate: versioning=regex:^RELEASE\.(?<major>\d+)-(?<minor>\d+)-(?<patch>\d+)T(?<build>\d+)-(?<revision>\d+)-\d+Z-jammy-scratch-fips-rfcurated$
-      - quay.io/rfcurated/minio/minio:RELEASE.2025-10-15T17-29-55Z-jammy-scratch-fips-rfcurated # renovate: versioning=regex:^RELEASE\.(?<major>\d+)-(?<minor>\d+)-(?<patch>\d+)T(?<build>\d+)-(?<revision>\d+)-\d+Z-jammy-scratch-fips-rfcurated$
+      - registry1.dso.mil/chainguard/cgr.dev/chainguard/minio:latest

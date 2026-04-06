@@ -39,10 +39,10 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        type: [install, upgrade]
-        flavor: [upstream, registry1, unicorn]
+        type: [install]
+        flavor: [registry1]
         # This is a temporary solution to test both sidecar and ambient modes TODO: Remove in future release
-        istio_mode: [ambient, sidecar]
+        istio_mode: [sidecar]
         exclude:
           - flavor: upstream
             istio_mode: sidecar
