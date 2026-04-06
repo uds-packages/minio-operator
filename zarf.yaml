@@ -17,4 +17,4 @@ components:
 
   - name: minio-operator
     images:
-      - registry1.dso.mil/ironbank/opensource/minio/minio:RELEASE.2025-10-15T17-29-55Z
+      - registry1.dso.mil/chainguard/cgr.dev/chainguard/minio:latest-arm64
