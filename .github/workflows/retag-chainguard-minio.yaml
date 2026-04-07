@@ -33,10 +33,10 @@ jobs:
           #   destination: ghcr.io/uds-packages/minio-operator/container/chainguard-minio
           #   sbom_package: minio
           - source: registry1.dso.mil/chainguard/cgr.dev/chainguard/minio-client:latest
-            destination: ghcr.io/uds-packages/minio-operator/container/registry1-chainguard-minio-client
+            destination: ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio-client
             sbom_package: mc
-          - source: registry1.dso.mil/chainguard/cgr.dev/chainguard/minio-client:latest
-            destination: ghcr.io/uds-packages/minio-operator/container/registry1-chainguard-minio
+          - source: registry1.dso.mil/chainguard/cgr.dev/chainguard/minio:latest
+            destination: ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio
             sbom_package: minio
 
     steps:
@@ -48,14 +48,6 @@ jobs:
         with:
           # renovate: datasource=github-tags depName=defenseunicorns/uds-cli versioning=semver
           version: v0.30.0
-
-      - name: Login to registry1
-        run: |
-          echo "${{ secrets.IRON_BANK_ROBOT_PASSWORD }}" | docker login -u "${{ secrets.IRON_BANK_ROBOT_USERNAME }}" --password-stdin registry1.dso.mil
-
-      - name: Test docker pull
-        run: |
-          docker pull registry1.dso.mil/chainguard/cgr.dev/chainguard/minio-client:latest
 
       - name: Environment setup
         run: |
