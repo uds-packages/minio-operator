@@ -26,18 +26,18 @@ jobs:
     strategy:
       matrix:
         image:
-          # - source: cgr.dev/chainguard/minio-client:latest
-          #   destination: ghcr.io/uds-packages/minio-operator/container/chainguard-minio-client
-          #   sbom_package: mc
-          # - source: cgr.dev/chainguard/minio:latest
-          #   destination: ghcr.io/uds-packages/minio-operator/container/chainguard-minio
-          #   sbom_package: minio
-          - source: registry1.dso.mil/chainguard/cgr.dev/chainguard/minio-client:latest
-            destination: ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio-client
+          - source: cgr.dev/chainguard/minio-client:latest
+            destination: ghcr.io/uds-packages/minio-operator/container/chainguard/minio-client
             sbom_package: mc
-          - source: registry1.dso.mil/chainguard/cgr.dev/chainguard/minio:latest
-            destination: ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio
+          - source: cgr.dev/chainguard/minio:latest
+            destination: ghcr.io/uds-packages/minio-operator/container/chainguard/minio
             sbom_package: minio
+          # - source: registry1.dso.mil/chainguard/cgr.dev/chainguard/minio-client:latest
+          #   destination: ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio-client
+          #   sbom_package: mc
+          # - source: registry1.dso.mil/chainguard/cgr.dev/chainguard/minio:latest
+          #   destination: ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio
+          #   sbom_package: minio
 
     steps:
       - name: Checkout repository
