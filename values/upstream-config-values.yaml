@@ -2,5 +2,5 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later OR LicenseRef-Defense-Unicorns-Commercial
 
 # renovate: TODO
-mcImage: ghcr.io/uds-packages/minio-operator/container/chainguard-minio-client:0.20250813.083541-r8
+mcImage: ghcr.io/uds-packages/minio-operator/container/chainguard/minio-client:0.20250813.083541-r8
 mcShell: /bin/bash
