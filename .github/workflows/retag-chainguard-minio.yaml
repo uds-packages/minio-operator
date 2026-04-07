@@ -4,18 +4,14 @@
 name: Retag Minio Images
       # Scans Chainguard sboms for wolfi apk version for latest image tag
       # This is done with on cgr and registry1
-      # Pulls the latest tag for ghcr.io/uds-packages/minio-operator/container/chainguard-minio[client]
+      # Checks latest tag for ghcr.io/uds-packages/minio-operator/container/[registry1]/chainguard/minio[client]
       # CHAINGUARD_APK_TAG == uds_package_image_tag + same digest → no change
       # CHAINGUARD_APK_TAG == uds_package_image_tag + different digest → repush with same tag (Chainguard rebuilt image)
       # CHAINGUARD_APK_TAG != uds_package_image_tag → copy chainguard:latest/retag and push
 
 on:
-  push:
-    branches:
-      - retag-registry1-latest
   schedule:
     - cron: '0 14 * * *' # daily at 8 AM Central
-  workflow_dispatch: # manual trigger for testing
 
 jobs:
   retag:
@@ -32,12 +28,12 @@ jobs:
           - source: cgr.dev/chainguard/minio:latest
             destination: ghcr.io/uds-packages/minio-operator/container/chainguard/minio
             sbom_package: minio
-          # - source: registry1.dso.mil/chainguard/cgr.dev/chainguard/minio-client:latest
-          #   destination: ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio-client
-          #   sbom_package: mc
-          # - source: registry1.dso.mil/chainguard/cgr.dev/chainguard/minio:latest
-          #   destination: ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio
-          #   sbom_package: minio
+          - source: registry1.dso.mil/chainguard/cgr.dev/chainguard/minio-client:latest
+            destination: ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio-client
+            sbom_package: mc
+          - source: registry1.dso.mil/chainguard/cgr.dev/chainguard/minio:latest
+            destination: ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio
+            sbom_package: minio
 
     steps:
       - name: Checkout repository
@@ -47,7 +43,7 @@ jobs:
         uses: defenseunicorns/setup-uds@ab842abcad1f7a3305c2538e3dd1950d0daacfa5 # v1.0.1
         with:
           # renovate: datasource=github-tags depName=defenseunicorns/uds-cli versioning=semver
-          version: v0.30.0
+          version: v0.30.1
 
       - name: Environment setup
         run: |
