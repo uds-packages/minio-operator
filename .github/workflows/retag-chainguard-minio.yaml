@@ -3,7 +3,7 @@
 
 name: Retag Minio Images
       # Scans Chainguard sboms for wolfi apk version for latest image tag
-      # This is done with on cgr and registry1
+      # This is done with chainguard and registry1 (chainguard) images
       # Checks latest tag for ghcr.io/uds-packages/minio-operator/container/[registry1]/chainguard/minio[client]
       # CHAINGUARD_APK_TAG == uds_package_image_tag + same digest → no change
       # CHAINGUARD_APK_TAG == uds_package_image_tag + different digest → repush with same tag (Chainguard rebuilt image)
