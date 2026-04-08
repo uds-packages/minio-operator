@@ -10,6 +10,9 @@ name: Retag Minio Images
       # CHAINGUARD_APK_TAG != uds_package_image_tag → copy chainguard:latest/retag and push
 
 on:
+  push:
+    branches:
+      - retag-registry1-latest
   schedule:
     - cron: '0 14 * * *' # daily at 8 AM Central
 
