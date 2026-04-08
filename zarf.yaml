@@ -64,7 +64,6 @@ components:
     images:
       - registry1.dso.mil/ironbank/opensource/minio/operator:v7.1.1
       - registry1.dso.mil/ironbank/opensource/minio/operator-sidecar:v7.1.0
-      # minio RELEASE regex: https://regex101.com/r/Xc6mrh/1
       - ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio-client:0.20250813.083541-r8
       - ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio:0.20260330.001845-r2
   - name: minio-operator

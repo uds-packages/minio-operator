@@ -4,6 +4,6 @@
 tenant:
   image:
     repository: ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio
-    # renovate: datasource=docker depName=registry1.dso.mil/ironbank/opensource/minio/minio versioning=regex:^RELEASE\.(?<major>\d+)-(?<minor>\d+)-(?<patch>\d+)T(?<build>\d+)-(?<revision>\d+)-\d+Z$
+    # renovate: datasource=docker depName=ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio versioning=semver
     tag: 0.20260330.001845-r2
     pullPolicy: IfNotPresent

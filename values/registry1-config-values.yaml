@@ -1,6 +1,5 @@
 # Copyright 2024 Defense Unicorns
 # SPDX-License-Identifier: AGPL-3.0-or-later OR LicenseRef-Defense-Unicorns-Commercial
 
-# renovate: datasource=docker depName=registry1.dso.mil/ironbank/opensource/minio/mc versioning=regex:^RELEASE\.(?<major>\d+)-(?<minor>\d+)-(?<patch>\d+)T(?<build>\d+)-(?<revision>\d+)-\d+Z$
 mcImage: ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio-client:0.20250813.083541-r8
 mcShell: /bin/bash
