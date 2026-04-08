@@ -3,7 +3,8 @@
 
 name: Retag Minio Images
       # Scans Chainguard sboms for wolfi apk version for latest image tag
-      # Pulls the latest tag for ghcr.io/uds-packages/minio-operator/container/chainguard-minio[client]
+      # This is done with chainguard and registry1 (chainguard) images
+      # Checks latest tag for ghcr.io/uds-packages/minio-operator/container/[registry1]/chainguard/minio[client]
       # CHAINGUARD_APK_TAG == uds_package_image_tag + same digest → no change
       # CHAINGUARD_APK_TAG == uds_package_image_tag + different digest → repush with same tag (Chainguard rebuilt image)
       # CHAINGUARD_APK_TAG != uds_package_image_tag → copy chainguard:latest/retag and push
@@ -22,29 +23,40 @@ jobs:
       matrix:
         image:
           - source: cgr.dev/chainguard/minio-client:latest
-            destination: ghcr.io/uds-packages/minio-operator/container/chainguard-minio-client
+            destination: ghcr.io/uds-packages/minio-operator/container/chainguard/minio-client
             sbom_package: mc
           - source: cgr.dev/chainguard/minio:latest
-            destination: ghcr.io/uds-packages/minio-operator/container/chainguard-minio
+            destination: ghcr.io/uds-packages/minio-operator/container/chainguard/minio
+            sbom_package: minio
+          - source: registry1.dso.mil/chainguard/cgr.dev/chainguard/minio-client:latest
+            destination: ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio-client
+            sbom_package: mc
+          - source: registry1.dso.mil/chainguard/cgr.dev/chainguard/minio:latest
+            destination: ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio
             sbom_package: minio
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
       - name: Install UDS CLI
         uses: defenseunicorns/setup-uds@ab842abcad1f7a3305c2538e3dd1950d0daacfa5 # v1.0.1
         with:
           # renovate: datasource=github-tags depName=defenseunicorns/uds-cli versioning=semver
           version: v0.30.1
 
-      - name: GHCR Login
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: echo "${{ env.GH_TOKEN }}" | uds zarf tools registry login -u "dummy" --password-stdin ghcr.io
+      - name: Environment setup
+        run: |
+            uds run actions:setup-environment \
+            --set REGISTRY1_USERNAME="${{ secrets.IRON_BANK_ROBOT_USERNAME }}" \
+            --set REGISTRY1_PASSWORD="${{ secrets.IRON_BANK_ROBOT_PASSWORD }}" \
+            --set GH_TOKEN="${{ secrets.GITHUB_TOKEN }}" \
         shell: bash
 
       - name: Get version from Chainguard image SBOM
         id: chainguard_apk_version
         run: |
-          CHAINGUARD_APK_TAG=$(uds zarf tools sbom scan ${{ matrix.image.source }} -o spdx-json 2>/dev/null | \
+          CHAINGUARD_APK_TAG=$(uds zarf tools sbom scan ${{ matrix.image.source }} -o spdx-json | \
             jq -r '.packages[] | select(.name == "${{ matrix.image.sbom_package }}" and .supplier == "Person: wolfi") | .versionInfo')
           echo "SBOM Wolfi APK version: ${CHAINGUARD_APK_TAG}"
           echo "chainguard_apk_tag=${CHAINGUARD_APK_TAG}" >> "$GITHUB_OUTPUT"
