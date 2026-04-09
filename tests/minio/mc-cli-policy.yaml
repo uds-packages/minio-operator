@@ -11,8 +11,8 @@ spec:
     spec:
       containers:
         - name: minio-client
-          image: minio/mc
-          command: ["/bin/sh", "-c"]
+          image: ghcr.io/uds-packages/minio-operator/container/chainguard/minio-client:0.20250813.083541-r8
+          command: ["/bin/bash", "-c"]
           args:
             - |
               BN="mc-cli-policy-bucket"
