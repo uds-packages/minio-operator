@@ -5,4 +5,4 @@ tenant:
   image:
     repository: ghcr.io/uds-packages/minio-operator/container/chainguard/minio
     # renovate: datasource=docker depName=ghcr.io/uds-packages/minio-operator/container/chainguard/minio versioning=semver
-    tag: 0.20260410.215259-r1
+    tag: 0.20260410.215259-r2
