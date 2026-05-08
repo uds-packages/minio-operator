@@ -3,9 +3,9 @@
 
 operator:
   image:
-    repository: quay.io/rfcurated/minio/operator
-    tag: 7.1.1-jammy-scratch-fips-rfcurated
+    repository: cgr.dev/defenseunicorns.com/minio-operator
+    tag: 7.1.1
   sidecarImage:
-    repository: quay.io/rfcurated/minio/operator-sidecar
-    tag: 7.1.1-jammy-scratch-fips-rfcurated
+    repository: cgr.dev/defenseunicorns.com/minio-operator-sidecar
+    tag: 7.1.1
     pullPolicy: IfNotPresent
