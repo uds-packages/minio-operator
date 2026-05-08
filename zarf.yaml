@@ -20,7 +20,6 @@ variables:
     default: uds.dev
 
 components:
-
   - name: minio-operator
     required: true
     import:
@@ -66,6 +65,7 @@ components:
       - registry1.dso.mil/ironbank/opensource/minio/operator-sidecar:v7.1.0
       - ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio-client:0.20250813.083541-r10
       - ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio:0.20260410.215259-r1
+
   - name: minio-operator
     required: true
     import:
@@ -83,7 +83,7 @@ components:
         valuesFiles:
           - values/unicorn-tenant-values.yaml
     images:
-      - quay.io/rfcurated/minio/operator-sidecar:7.1.1-jammy-scratch-fips-rfcurated
-      - quay.io/rfcurated/minio/operator:7.1.1-jammy-scratch-fips-rfcurated
-      - quay.io/rfcurated/minio/mc:RELEASE.2025-08-13T08-35-41Z-jammy-scratch-fips-rfcurated # renovate: versioning=regex:^RELEASE\.(?<major>\d+)-(?<minor>\d+)-(?<patch>\d+)T(?<build>\d+)-(?<revision>\d+)-\d+Z-jammy-scratch-fips-rfcurated$
-      - quay.io/rfcurated/minio/minio:RELEASE.2025-10-15T17-29-55Z-jammy-scratch-fips-rfcurated # renovate: versioning=regex:^RELEASE\.(?<major>\d+)-(?<minor>\d+)-(?<patch>\d+)T(?<build>\d+)-(?<revision>\d+)-\d+Z-jammy-scratch-fips-rfcurated$
+      - cgr.dev/defenseunicorns.com/minio-operator-sidecar:7.1.1
+      - cgr.dev/defenseunicorns.com/minio-operator:7.1.1
+      - cgr.dev/defenseunicorns.com/minio:0.20260504.002721
+      - cgr.dev/defenseunicorns.com/minio-client:0.20250813.083541
