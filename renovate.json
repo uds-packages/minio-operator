@@ -12,6 +12,13 @@
   ],
   "packageRules": [
     {
+      "matchPackageNames": [
+        "ghcr.io/uds-packages/minio-operator/container/chainguard/minio",
+        "ghcr.io/uds-packages/minio-operator/container/chainguard/minio-client"
+      ],
+      "versioning": "loose"
+    },
+    {
       "groupName": "Minio-operator Support Dependencies",
       "labels": [
         "support-deps"
