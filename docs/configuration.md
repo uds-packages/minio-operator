@@ -4,7 +4,7 @@ Minio is configured through the upstream [Minio Operator and Tenant charts](http
 
 ## Networking
 
-Network policies are controlled via the `uds-minio-config` chart and follow [similar networking patterns as the Reference Package](https://github.com/uds-packages/reference-package/blob/main/chart/templates/uds-package.yaml).  Because minio does not interact with external resources like databases or object storage it only implements `custom` networking for the `minio` tenant namespace.
+Network policies are controlled via the `uds-minio-config` chart and follow [similar networking patterns as the Reference Package](https://github.com/uds-packages/reference-package/blob/main/docs/networking-patterns.md).  Because minio does not interact with external resources like databases or object storage it only implements `custom` networking for the `minio` tenant namespace.
 
 ## Storage Pools
 
