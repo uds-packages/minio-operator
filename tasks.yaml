@@ -46,7 +46,7 @@ tasks:
         if: ${{ eq .variables.ISTIO_MODE "sidecar" }}
       - task: deploy:test-bundle
         if: ${{ eq .variables.ISTIO_MODE "ambient" }}
-      - task: setup:create-doug-user
+      - task: setup:keycloak-user
       - task: test:all
 
   - name: dev
