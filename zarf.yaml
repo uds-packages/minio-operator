@@ -39,8 +39,8 @@ components:
     images:
       - quay.io/minio/operator:v7.1.1
       - quay.io/minio/operator-sidecar:v7.1.0
-      - ghcr.io/uds-packages/minio-operator/container/chainguard/minio-client:0.20250813.083541-r10
-      - ghcr.io/uds-packages/minio-operator/container/chainguard/minio:0.20260410.215259-r1
+      - ghcr.io/uds-packages/minio-operator/container/chainguard/minio-client:0.20250813.083541-r14
+      - ghcr.io/uds-packages/minio-operator/container/chainguard/minio:0.20260520.234452-r2
 
   - name: minio-operator
     required: true
@@ -64,7 +64,7 @@ components:
       - registry1.dso.mil/ironbank/opensource/minio/operator:v7.1.1
       - registry1.dso.mil/ironbank/opensource/minio/operator-sidecar:v7.1.0
       - ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio-client:0.20250813.083541-r10
-      - ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio:0.20260410.215259-r1
+      - ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio:0.20260520.234452-r1
 
   - name: minio-operator
     required: true
@@ -85,5 +85,5 @@ components:
     images:
       - cgr.dev/defenseunicorns.com/minio-operator-sidecar:7.1.1
       - cgr.dev/defenseunicorns.com/minio-operator:7.1.1
-      - cgr.dev/defenseunicorns.com/minio:0.20260504.002721
+      - cgr.dev/defenseunicorns.com/minio:v0.20260520.234452
       - cgr.dev/defenseunicorns.com/minio-client:0.20250813.083541

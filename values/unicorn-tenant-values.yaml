@@ -5,5 +5,5 @@ tenant:
   image:
     repository: cgr.dev/defenseunicorns.com/minio
     # renovate: datasource=docker depName=cgr.dev/defenseunicorns.com/minio versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)$
-    tag: 0.20260504.002721
+    tag: v0.20260520.234452
     pullPolicy: IfNotPresent
