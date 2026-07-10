@@ -40,7 +40,7 @@ components:
       - quay.io/minio/operator:v7.1.1
       - quay.io/minio/operator-sidecar:v7.1.0
       - ghcr.io/uds-packages/minio-operator/container/chainguard/minio-client:0.20250813.083541-r15
-      - ghcr.io/uds-packages/minio-operator/container/chainguard/minio:0.20260604.005411-r1
+      - ghcr.io/uds-packages/minio-operator/container/chainguard/minio:0.20260604.005411-r2
 
   - name: minio-operator
     required: true
