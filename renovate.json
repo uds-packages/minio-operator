@@ -27,8 +27,10 @@
   "packageRules": [
     {
       "matchPackageNames": [
-        "ghcr.io/uds-packages/minio-operator/container/chainguard/minio",
-        "ghcr.io/uds-packages/minio-operator/container/chainguard/minio-client"
+        "ghcr.io/uds-packages/minio-operator/container/**/minio",
+        "ghcr.io/uds-packages/minio-operator/container/**/minio-client",
+        "cgr.dev/defenseunicorns.com/minio",
+        "cgr.dev/defenseunicorns.com/minio-client"
       ],
       "versioning": "loose"
     },
