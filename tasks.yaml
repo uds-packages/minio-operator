@@ -69,7 +69,7 @@ tasks:
     description: Test an upgrade from the latest released package to the current branch
     actions:
       - task: upgrade:create-latest-tag-bundle
-      # - task: setup:k3d-test-cluster
+      - task: setup:k3d-test-cluster
       # temp solution to test both sidecar and ambient modes TODO: Remove in future release
       - task: deploy:test-bundle
         with:
