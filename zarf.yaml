@@ -19,6 +19,11 @@ variables:
   - name: DOMAIN
     default: uds.dev
 
+values:
+  files:
+    - zarf-values.yaml
+  schema: zarf-values.schema.json
+
 components:
   - name: minio-operator
     required: true
