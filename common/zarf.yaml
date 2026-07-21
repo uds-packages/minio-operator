@@ -19,6 +19,12 @@ components:
           - name: TENANT
             path: name
             description: The name of the tenant
+        values:
+          - sourcePath: .uds-minio-config
+            targetPath: .
+            excludePaths:
+              - .uds-minio-config.mcImage
+              - .uds-minio-config.mcShell
       - name: minio-operator
         version: v7.1.1
         url: https://github.com/minio/operator.git
@@ -26,6 +32,15 @@ components:
         namespace: minio-operator
         valuesFiles:
           - ../values/common-values.yaml
+        values:
+          - sourcePath: .minio-operator
+            targetPath: .
+            excludePaths:
+              - .minio-operator.operator.image
+              - .minio-operator.operator.sidecarImage
+              - .minio-operator.operator.imagePullSecrets
+              - .minio-operator.operator.securityContext
+              - .minio-operator.operator.containerSecurityContext
       - name: minio-tenant
         version: v7.1.1
         url: https://github.com/minio/operator.git
@@ -37,6 +52,12 @@ components:
           - name: TENANT
             path: tenant.name
             description: The name of the tenant
+        values:
+          - sourcePath: .minio-tenant
+            targetPath: .
+            excludePaths:
+              - .minio-tenant.tenant.image
+              - .minio-tenant.tenant.imagePullSecret
     actions:
       onDeploy:
         after:
