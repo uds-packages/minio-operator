@@ -1,13 +1,13 @@
-# Copyright 2024 Defense Unicorns
+# Copyright 2024-2026 Defense Unicorns
 # SPDX-License-Identifier: AGPL-3.0-or-later OR LicenseRef-Defense-Unicorns-Commercial
 
 flavors:
   - name: upstream
     # renovate-uds: datasource=docker depName=quay.io/minio/operator extractVersion=^v?(?<version>\d+\.\d+\.\d+)$
-    version: 7.1.1-uds.22
+    version: 7.1.1-uds.23
   - name: registry1
     # renovate-uds: datasource=docker depName=registry1.dso.mil/ironbank/opensource/minio/operator extractVersion=^v?(?<version>\d+\.\d+\.\d+)$
-    version: 7.1.1-uds.23
+    version: 7.1.1-uds.24
   - name: unicorn
     # renovate-uds: datasource=docker depName=cgr.dev/defenseunicorns.com/minio-operator
-    version: 7.1.1-uds.21
+    version: 7.1.1-uds.22
