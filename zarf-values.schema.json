@@ -1,0 +1,431 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "properties": {
+    "minio-operator": {
+      "properties": {
+        "operator": {
+          "properties": {
+            "additionalLabels": {
+              "properties": {},
+              "type": "object"
+            },
+            "affinity": {
+              "properties": {
+                "podAntiAffinity": {
+                  "properties": {
+                    "requiredDuringSchedulingIgnoredDuringExecution": {
+                      "items": {
+                        "properties": {
+                          "labelSelector": {
+                            "properties": {
+                              "matchExpressions": {
+                                "items": {
+                                  "properties": {
+                                    "key": {
+                                      "type": "string"
+                                    },
+                                    "operator": {
+                                      "type": "string"
+                                    },
+                                    "values": {
+                                      "items": {
+                                        "type": "string"
+                                      },
+                                      "type": "array"
+                                    }
+                                  },
+                                  "type": "object"
+                                },
+                                "type": "array"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "topologyKey": {
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            },
+            "env": {
+              "items": {
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "initContainers": {
+              "type": "array"
+            },
+            "nodeSelector": {
+              "properties": {},
+              "type": "object"
+            },
+            "priorityClassName": {
+              "type": "string"
+            },
+            "replicaCount": {
+              "type": "number"
+            },
+            "resources": {
+              "properties": {
+                "requests": {
+                  "properties": {
+                    "cpu": {
+                      "type": "string"
+                    },
+                    "ephemeral-storage": {
+                      "type": "string"
+                    },
+                    "memory": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            },
+            "runtimeClassName": {
+              "type": "string"
+            },
+            "serviceAccountAnnotations": {
+              "type": "array"
+            },
+            "tolerations": {
+              "type": "array"
+            },
+            "topologySpreadConstraints": {
+              "type": "array"
+            },
+            "volumeMounts": {
+              "type": "array"
+            },
+            "volumes": {
+              "type": "array"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "minio-tenant": {
+      "properties": {
+        "ingress": {
+          "properties": {
+            "api": {
+              "properties": {
+                "annotations": {
+                  "properties": {},
+                  "type": "object"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "host": {
+                  "type": "string"
+                },
+                "ingressClassName": {
+                  "type": "string"
+                },
+                "labels": {
+                  "properties": {},
+                  "type": "object"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "pathType": {
+                  "type": "string"
+                },
+                "tls": {
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "console": {
+              "properties": {
+                "annotations": {
+                  "properties": {},
+                  "type": "object"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "host": {
+                  "type": "string"
+                },
+                "ingressClassName": {
+                  "type": "string"
+                },
+                "labels": {
+                  "properties": {},
+                  "type": "object"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "pathType": {
+                  "type": "string"
+                },
+                "tls": {
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "tenant": {
+          "properties": {
+            "additionalVolumeMounts": {
+              "type": "array"
+            },
+            "additionalVolumes": {
+              "type": "array"
+            },
+            "buckets": {
+              "type": "array"
+            },
+            "certificate": {
+              "properties": {
+                "certConfig": {
+                  "properties": {},
+                  "type": "object"
+                },
+                "externalCaCertSecret": {
+                  "type": "array"
+                },
+                "externalCertSecret": {
+                  "type": "array"
+                },
+                "requestAutoCert": {
+                  "type": "boolean"
+                }
+              },
+              "type": "object"
+            },
+            "configSecret": {
+              "properties": {
+                "accessKey": {
+                  "type": "string"
+                },
+                "existingSecret": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "secretKey": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "configuration": {
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "env": {
+              "type": "array"
+            },
+            "exposeServices": {
+              "properties": {},
+              "type": "object"
+            },
+            "features": {
+              "properties": {
+                "bucketDNS": {
+                  "type": "boolean"
+                },
+                "domains": {
+                  "properties": {},
+                  "type": "object"
+                },
+                "enableSFTP": {
+                  "type": "boolean"
+                }
+              },
+              "type": "object"
+            },
+            "initContainers": {
+              "type": "array"
+            },
+            "lifecycle": {
+              "properties": {},
+              "type": "object"
+            },
+            "liveness": {
+              "properties": {},
+              "type": "object"
+            },
+            "logging": {
+              "properties": {},
+              "type": "object"
+            },
+            "metrics": {
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "port": {
+                  "type": "number"
+                },
+                "protocol": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "mountPath": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "podManagementPolicy": {
+              "type": "string"
+            },
+            "pools": {
+              "items": {
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "servers": {
+                    "type": "number"
+                  },
+                  "size": {
+                    "type": "string"
+                  },
+                  "volumesPerServer": {
+                    "type": "number"
+                  }
+                },
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "poolsMetadata": {
+              "properties": {
+                "annotations": {
+                  "properties": {},
+                  "type": "object"
+                },
+                "labels": {
+                  "properties": {},
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            },
+            "priorityClassName": {
+              "type": "string"
+            },
+            "prometheusOperator": {
+              "type": "boolean"
+            },
+            "readiness": {
+              "properties": {},
+              "type": "object"
+            },
+            "scheduler": {
+              "properties": {},
+              "type": "object"
+            },
+            "serviceAccountName": {
+              "type": "string"
+            },
+            "serviceMetadata": {
+              "properties": {},
+              "type": "object"
+            },
+            "startup": {
+              "properties": {},
+              "type": "object"
+            },
+            "subPath": {
+              "type": "string"
+            },
+            "users": {
+              "type": "array"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "uds-minio-config": {
+      "properties": {
+        "additionalNetworkAllow": {
+          "type": "array"
+        },
+        "ambient": {
+          "type": "boolean"
+        },
+        "apps": {
+          "type": "array"
+        },
+        "console": {
+          "properties": {
+            "gateway": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "identityOpenidClientSecret": {
+          "type": "string"
+        },
+        "identityOpenidConfigUrl": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "rootPassword": {
+          "type": "string"
+        },
+        "rootUser": {
+          "type": "string"
+        },
+        "sso": {
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "type": "object"
+}
