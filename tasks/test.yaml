@@ -4,8 +4,25 @@
 tasks:
   - name: all
     actions:
+      - task: operator-network-policy
       - task: ingress
       - task: setup-bucket
+
+  - name: operator-network-policy
+    actions:
+      - description: Validate tenant ingress to the operator update service
+        cmd: >-
+          ./uds zarf tools kubectl get package minio-operator -n minio-operator
+          -o jsonpath='{range .spec.network.allow[*]}{.direction}{"|"}{.remoteNamespace}{"|"}{.port}{"\n"}{end}'
+          | grep -Fxq 'Ingress|*|4221'
+      - description: Validate operator rules are not added to the built-in tenant
+        cmd: |
+          if ./uds zarf tools kubectl get package minio -n minio \
+            -o jsonpath='{range .spec.network.allow[*]}{.direction}{"|"}{.remoteNamespace}{"|"}{.port}{"\n"}{end}' \
+            | grep -Fxq 'Ingress|*|4221'; then
+            echo "operator network rule leaked into the tenant Package" >&2
+            exit 1
+          fi
 
   - name: setup-bucket
     actions:

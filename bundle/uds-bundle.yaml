@@ -20,6 +20,14 @@ packages:
               default: true
               name: ambient
           values:
+            - path: operatorAdditionalNetworkAllow
+              value:
+                - direction: Ingress
+                  selector:
+                    app.kubernetes.io/name: operator
+                  remoteNamespace: "*"
+                  port: 4221
+                  description: MinIO tenant access to the operator update service
             # Test helm overrides to provision app specific buckets, policies and creds
             - path: apps
               value:

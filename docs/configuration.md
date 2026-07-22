@@ -4,7 +4,32 @@ Minio is configured through the upstream [Minio Operator and Tenant charts](http
 
 ## Networking
 
-Network policies are controlled via the `uds-minio-config` chart and follow [similar networking patterns as the Reference Package](https://github.com/uds-packages/reference-package/blob/main/docs/networking-patterns.md).  Because minio does not interact with external resources like databases or object storage it only implements `custom` networking for the `minio` tenant namespace.
+Network policies are controlled via the `uds-minio-config` chart and follow [similar networking patterns as the Reference Package](https://github.com/uds-packages/reference-package/blob/main/docs/networking-patterns.md).
+
+The built-in tenant uses the `minio` namespace. When the operator also manages tenants in other namespaces, configure `operatorAdditionalNetworkAllow` on `uds-minio-config`. Operator-to-tenant management traffic uses port 9000, while tenants use the operator's port 4221 update service during operator-managed upgrades. The upstream operator watches all namespaces by default; if `WATCHED_NAMESPACE` is explicitly set in the operator environment, it must include every target namespace.
+
+```yaml
+overrides:
+  minio-operator:
+    uds-minio-config:
+      values:
+        - path: operatorAdditionalNetworkAllow
+          value:
+            - direction: Egress
+              selector:
+                app.kubernetes.io/name: operator
+              remoteNamespace: "*"
+              port: 9000
+              description: MinIO operator communication with tenants
+            - direction: Ingress
+              selector:
+                app.kubernetes.io/name: operator
+              remoteNamespace: "*"
+              port: 4221
+              description: MinIO tenant access to the operator update service
+```
+
+The wildcard can be replaced with individual tenant namespaces for a narrower policy. `operatorAdditionalNetworkAllow` is rendered only into the operator `Package`; the existing `additionalNetworkAllow` value remains scoped to the built-in tenant `Package`. Each external tenant's UDS `Package` must provide the reciprocal ingress on port 9000 and egress on port 4221.
 
 ## Storage Pools
 

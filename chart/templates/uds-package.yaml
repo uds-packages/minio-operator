@@ -17,6 +17,7 @@ spec:
           v1.min.io/tenant: {{ .Values.name }}
         selector:
           app.kubernetes.io/name: operator
+        port: 9000
         description: "Egress to tenant"
       - direction: Ingress
         remoteNamespace: minio
@@ -24,9 +25,32 @@ spec:
           v1.min.io/tenant: {{ .Values.name }}
         selector:
           app.kubernetes.io/name: operator
+        port: 4221
         description: "Ingress from tenant"
 
       - direction: Egress
         selector:
           app.kubernetes.io/name: operator
         remoteGenerated: KubeAPI
+
+      # Custom rules for tenants deployed outside the built-in tenant namespace
+      {{- range .Values.operatorAdditionalNetworkAllow }}
+      - direction: {{ .direction }}
+        {{- if .selector }}
+        selector:
+          {{ .selector | toYaml | nindent 10 }}
+        {{- end }}
+        {{- if not .remoteGenerated }}
+        remoteNamespace: {{ .remoteNamespace | trimAll "\"" | quote }}
+        {{- if .remoteSelector }}
+        remoteSelector:
+          {{ .remoteSelector | toYaml | nindent 10 }}
+        {{- end }}
+        {{- if .port }}
+        port: {{ .port }}
+        {{- end }}
+        {{- else }}
+        remoteGenerated: {{ .remoteGenerated }}
+        {{- end }}
+        description: {{ .description | quote }}
+      {{- end }}

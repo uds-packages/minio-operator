@@ -48,7 +48,17 @@ spec:
           app.kubernetes.io/name: operator
         selector:
           v1.min.io/tenant: {{ .Values.name }}
+        port: 9000
         description: "Ingress from operator"
+
+      - direction: Egress
+        remoteNamespace: minio-operator
+        remoteSelector:
+          app.kubernetes.io/name: operator
+        selector:
+          v1.min.io/tenant: {{ .Values.name }}
+        port: 4221
+        description: "Egress to operator update service"
 
       {{- if .Values.sso.enabled }}
       # SSO
@@ -95,14 +105,16 @@ spec:
           {{ .selector | toYaml | nindent 10 }}
         {{- end }}
         {{- if not .remoteGenerated }}
-        remoteNamespace: {{ .remoteNamespace }}
+        remoteNamespace: {{ .remoteNamespace | trimAll "\"" | quote }}
         {{- if .remoteSelector }}
         remoteSelector:
           {{ .remoteSelector | toYaml | nindent 10 }}
         {{- end }}
+        {{- if .port }}
         port: {{ .port }}
+        {{- end }}
         {{- else }}
         remoteGenerated: {{ .remoteGenerated }}
         {{- end }}
-        description: {{ .description }}
+        description: {{ .description | quote }}
       {{- end }}
