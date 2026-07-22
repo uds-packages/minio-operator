@@ -15,13 +15,33 @@ variables:
 
 
 components:
-  - name: test-minio-connectivity
+  # Reconcile the UDS Package before creating pods. In sidecar mode the namespace
+  # must be labeled for injection before the Jobs are admitted.
+  - name: configure-mc-cli-network
     required: true
     manifests:
-      - name: mc-cli
+      - name: mc-cli-package
         namespace: mc-cli
         files:
           - uds-package.yaml
+    actions:
+      onDeploy:
+        after:
+          - description: Wait for the mc-cli UDS Package
+            maxTotalSeconds: 300
+            wait:
+              cluster:
+                kind: Packages
+                name: mc-cli
+                namespace: mc-cli
+                condition: "'{.status.phase}'=Ready"
+
+  - name: test-minio-connectivity
+    required: true
+    manifests:
+      - name: mc-cli-jobs
+        namespace: mc-cli
+        files:
           - mc-cli-test.yaml
           - mc-cli-policy.yaml
     images:
