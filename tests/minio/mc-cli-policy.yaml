@@ -16,13 +16,21 @@ spec:
           args:
             - |
               BN="mc-cli-policy-bucket"
-              mc alias set myminio $MINIO_SERVER $MINIO_ACCESS_KEY $MINIO_SECRET_KEY || exit 1
+              attempt=1
+              until mc alias set myminio "$MINIO_SERVER" "$MINIO_ACCESS_KEY" "$MINIO_SECRET_KEY"; do
+                if [ "$attempt" -ge 60 ]; then
+                  echo "MinIO was not reachable after five minutes" >&2
+                  exit 1
+                fi
+                attempt=$((attempt + 1))
+                sleep 5
+              done
               echo "Hello from Kubernetes Job!" > /tmp/hello.txt
-              if mc cp /tmp/hello.txt myminio/$BN/hello.txt; then
+              if mc cp /tmp/hello.txt "myminio/$BN/hello.txt"; then
                 echo "Bucket upload should be disallowed but succeeded instead"
                 exit 1
               fi
-              mc ls myminio/$BN
+              mc ls "myminio/$BN"
               echo "Bucket upload failed successfully and list completed successfully"
           env:
             - name: MINIO_SERVER
@@ -46,4 +54,6 @@ spec:
       volumes:
         - name: config-volume
           emptyDir: {}
-  backoffLimit: 4
+  # Connectivity retries happen in the container so a transient startup race
+  # does not leave failed pods behind.
+  backoffLimit: 0

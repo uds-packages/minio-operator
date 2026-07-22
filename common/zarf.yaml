@@ -88,3 +88,12 @@ components:
                 name: "v1.min.io/tenant=${ZARF_VAR_TENANT}"
                 namespace: minio
                 condition: Ready
+          - description: Wait for Minio application setup jobs
+            maxTotalSeconds: 660
+            cmd: |
+              if [ -n "$(./zarf tools kubectl get jobs -n minio -l app.kubernetes.io/component=minio-setup -o name)" ]; then
+                ./zarf tools kubectl wait --for=condition=complete jobs \
+                  -n minio \
+                  -l app.kubernetes.io/component=minio-setup \
+                  --timeout=600s
+              fi
