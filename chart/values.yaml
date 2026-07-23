@@ -39,4 +39,9 @@ apps: []
 mcImage: ""
 mcShell: ""
 ambient: true
+
+# Custom UDS network rules for the built-in tenant Package.
 additionalNetworkAllow: []
+
+# Custom UDS network rules for the operator Package.
+operatorAdditionalNetworkAllow: []

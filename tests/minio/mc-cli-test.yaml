@@ -16,10 +16,18 @@ spec:
           args:
             - |
               BN="mc-cli-test-bucket"
-              mc alias set myminio $MINIO_SERVER $MINIO_ACCESS_KEY $MINIO_SECRET_KEY || exit 1
+              attempt=1
+              until mc alias set myminio "$MINIO_SERVER" "$MINIO_ACCESS_KEY" "$MINIO_SECRET_KEY"; do
+                if [ "$attempt" -ge 60 ]; then
+                  echo "MinIO was not reachable after five minutes" >&2
+                  exit 1
+                fi
+                attempt=$((attempt + 1))
+                sleep 5
+              done
               echo "Hello from Kubernetes Job!" > /tmp/hello.txt
-              mc cp /tmp/hello.txt myminio/$BN/hello.txt || exit 1
-              mc cp myminio/$BN/hello.txt /tmp/downloaded_hello.txt || exit 1
+              mc cp /tmp/hello.txt "myminio/$BN/hello.txt" || exit 1
+              mc cp "myminio/$BN/hello.txt" /tmp/downloaded_hello.txt || exit 1
               echo "Bucket, upload, and download operations completed successfully"
           env:
             - name: MINIO_SERVER
@@ -43,4 +51,6 @@ spec:
       volumes:
         - name: config-volume
           emptyDir: {}
-  backoffLimit: 4
+  # Connectivity retries happen in the container so a transient startup race
+  # does not leave failed pods behind.
+  backoffLimit: 0

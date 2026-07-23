@@ -9,7 +9,7 @@ metadata:
 spec:
   network:
     serviceMesh:
-      mode: ###ZARF_VAR_ISTIO_MODE###
+      mode: "###ZARF_VAR_ISTIO_MODE###"
     allow:
       - direction: Egress
         selector:

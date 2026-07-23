@@ -4,8 +4,25 @@
 tasks:
   - name: all
     actions:
+      - task: operator-network-policy
       - task: ingress
       - task: setup-bucket
+
+  - name: operator-network-policy
+    actions:
+      - description: Validate tenant ingress to the operator update service
+        cmd: >-
+          ./uds zarf tools kubectl get package minio-operator -n minio-operator
+          -o jsonpath='{range .spec.network.allow[*]}{.direction}{"|"}{.remoteNamespace}{"|"}{.port}{"\n"}{end}'
+          | grep -Fxq 'Ingress|*|4221'
+      - description: Validate operator rules are not added to the built-in tenant
+        cmd: |
+          if ./uds zarf tools kubectl get package minio -n minio \
+            -o jsonpath='{range .spec.network.allow[*]}{.direction}{"|"}{.remoteNamespace}{"|"}{.port}{"\n"}{end}' \
+            | grep -Fxq 'Ingress|*|4221'; then
+            echo "operator network rule leaked into the tenant Package" >&2
+            exit 1
+          fi
 
   - name: setup-bucket
     actions:
@@ -19,7 +36,7 @@ tasks:
         cmd: ./uds zarf package deploy "zarf-package-minio-test-${UDS_ARCH}-0.1.0.tar.zst" --confirm --no-progress --set ISTIO_MODE=sidecar
         if: ${{ eq .variables.ISTIO_MODE "sidecar" }}
       - description: Validate Test Job Completed
-        maxTotalSeconds: 300
+        maxTotalSeconds: 360
         wait:
           cluster:
             kind: Job
@@ -27,7 +44,7 @@ tasks:
             namespace: mc-cli
             condition: "'{.status.succeeded}'=1"
       - description: Validate Policy Job Completed
-        maxTotalSeconds: 300
+        maxTotalSeconds: 360
         wait:
           cluster:
             kind: Job

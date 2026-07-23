@@ -8,6 +8,8 @@ kind: Job
 metadata:
   name: {{ .name }}-minio-setup-{{ $.Release.Revision }}
   namespace: minio
+  labels:
+    app.kubernetes.io/component: minio-setup
 spec:
   template:
     spec:
@@ -17,8 +19,17 @@ spec:
         command: [{{ $.Values.mcShell | quote }}, "-c"]
         args:
           - |
-            # If we cannot connect to the minio cluster kill the Job to force a restart
-            mc alias set myminio $MINIO_SERVER $MINIO_ACCESS_KEY $MINIO_SECRET_KEY || exit 1;
+            # The config chart can be installed before the tenant service is ready.
+            # Retry in this container so Kubernetes does not exhaust the Job backoff.
+            attempt=1
+            until mc alias set myminio "$MINIO_SERVER" "$MINIO_ACCESS_KEY" "$MINIO_SECRET_KEY"; do
+              if [ "$attempt" -ge 120 ]; then
+                echo "MinIO was not reachable after 10 minutes" >&2
+                exit 1
+              fi
+              attempt=$((attempt + 1))
+              sleep 5
+            done
 
             {{- range $bucket := .bucketNames }}
             mc mb --ignore-existing myminio/{{ $bucket }};
