@@ -29,7 +29,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: test-flavor
-        uses: defenseunicorns/uds-common/.github/actions/test-flavor@32bddb814b11b8adc2aa930dc1caeb5b739413e0 # v1.28.2
+        uses: defenseunicorns/uds-common/.github/actions/test-flavor@a99629a47585162e7a133c6f58c9874268103155 # v1.28.3
         id: test-flavor
     outputs:
       upgrade-flavors: ${{ steps.test-flavor.outputs.upgrade-flavors }}
@@ -48,7 +48,7 @@ jobs:
             istio_mode: sidecar
           - flavor: unicorn
             istio_mode: sidecar
-    uses: defenseunicorns/uds-common/.github/workflows/callable-test.yaml@32bddb814b11b8adc2aa930dc1caeb5b739413e0 # v1.28.2
+    uses: defenseunicorns/uds-common/.github/workflows/callable-test.yaml@a99629a47585162e7a133c6f58c9874268103155 # v1.28.3
     with:
       upgrade-flavors: ${{ needs.check-flavor.outputs.upgrade-flavors }}
       flavor: ${{ matrix.flavor }}
