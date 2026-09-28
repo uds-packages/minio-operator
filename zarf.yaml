@@ -45,7 +45,7 @@ components:
       - quay.io/minio/operator:v7.1.1
       - quay.io/minio/operator-sidecar:v7.1.0
       - ghcr.io/uds-packages/minio-operator/container/chainguard/minio-client:0.20250813.083541-r24
-      - ghcr.io/uds-packages/minio-operator/container/chainguard/minio:0.20260921.001541-r0
+      - ghcr.io/uds-packages/minio-operator/container/chainguard/minio:0.20260922.192518-r0
 
   - name: minio-operator
     required: true
@@ -69,7 +69,7 @@ components:
       - registry1.dso.mil/ironbank/opensource/minio/operator:v7.1.1
       - registry1.dso.mil/ironbank/opensource/minio/operator-sidecar:v7.1.0
       - ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio-client:0.20250813.083541-r24
-      - ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio:0.20260921.001541-r0
+      - ghcr.io/uds-packages/minio-operator/container/registry1/chainguard/minio:0.20260922.192518-r0
 
   - name: minio-operator
     required: true
