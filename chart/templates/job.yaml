@@ -38,6 +38,12 @@ spec:
             mc admin policy create myminio {{ .name }}-policy /config/policy.json;
             mc admin user add myminio $USER $USER_SECRET;
             mc admin policy attach myminio {{ .name }}-policy --user $USER || echo Skipping user attachment;
+
+            # create service accounts (if specified)
+            {{- range $sa := .serviceAccounts }}
+            echo '{{ $sa.policy }}' > /tmp/{{ $sa.name }}-policy.json;
+            mc admin user svcacct add --policy /tmp/{{ $sa.name }}-policy.json myminio {{ $sa.name }};
+            {{- end }}
         env:
         - name: MINIO_SERVER
           value: "http://uds-minio-hl.minio.svc.cluster.local:9000"
