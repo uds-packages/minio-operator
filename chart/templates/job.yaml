@@ -42,7 +42,14 @@ spec:
             # create service accounts (if specified)
             {{- range $sa := .serviceAccounts }}
             echo '{{ $sa.policy }}' > /tmp/{{ $sa.name }}-policy.json;
-            mc admin user svcacct add --policy /tmp/{{ $sa.name }}-policy.json myminio {{ $sa.name }};
+            opts=""
+            {{- if $sa.accessKey }}
+            opts="$opts --access-key ${{ $sa.accessKey }}"
+            {{- end }}
+            {{- if $sa.secretKey }}
+            opts="$opts --secret-key ${{ $sa.secretKey }}"
+            {{- end }}
+            mc admin user svcacct add $opts --policy /tmp/{{ $sa.name }}-policy.json myminio {{ $sa.name }};
             {{- end }}
         env:
         - name: MINIO_SERVER

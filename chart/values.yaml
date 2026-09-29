@@ -37,6 +37,8 @@ apps: []
   #     - name: minio-test-bucket-2-sa
   #       policy: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"s3:PutObject\",\"s3:AbortMultipartUpload\"],\"Resource\":[\"arn:aws:s3:::test-bucket-2/*\"]},{\"Effect\":\"Allow\",\"Action\":[\"s3:ListBucket\"],\"Resource\":[\"arn:aws:s3:::test-bucket-2\"]}]}"
   #       user: minio
+  #       accessKey: "minio-test-bucket-2-sa"
+  #       secretkey: "SuperSecret123@"
   #   copyPassword:
   #     enabled: true
   #     secretName:
