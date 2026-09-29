@@ -39,6 +39,7 @@ apps: []
   #       user: minio
   #       accessKey: "minio-test-bucket-2-sa"
   #       secretkey: "SuperSecret123@"
+  #       expiry: "2026-10-31T23:59:59Z" # check mc help for supported formats
   #   copyPassword:
   #     enabled: true
   #     secretName:
