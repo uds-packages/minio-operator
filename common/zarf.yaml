@@ -61,6 +61,8 @@ components:
     actions:
       onDeploy:
         after:
+          - cmd: ./zarf tools kubectl -n minio-operator rollout restart deployment
+            description: Restart Minio Operator Deployment so pod cycles on upgrades
           - cmd: ./zarf tools kubectl -n minio rollout restart statefulset
             description: Restart Minio StatefulSet so pods cycle on upgrades
           - cmd: ./zarf tools kubectl -n minio rollout status statefulset
