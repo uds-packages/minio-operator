@@ -3,6 +3,7 @@
 
 includes:
   - test: ./tasks/test.yaml
+  - release: ./tasks/release.yaml
   - create: https://raw.githubusercontent.com/defenseunicorns/uds-common/v1.32.1/tasks/create.yaml
   - publish: https://raw.githubusercontent.com/defenseunicorns/uds-common/v1.32.1/tasks/publish.yaml
   - lint: https://raw.githubusercontent.com/defenseunicorns/uds-common/v1.32.1/tasks/lint.yaml
@@ -15,6 +16,8 @@ includes:
 
 # Temporarily expose istio mode for testing both sidecar and ambient modes TODO: Remove in future release
 variables:
+  - name: NEXT_MODE
+    default: "true"
   - name: ISTIO_MODE
     description: "The Istio mode to use for the test"
     default: ambient
@@ -34,6 +37,7 @@ tasks:
       - task: create:package
         with:
           options: "--skip-sbom"
+      - task: release:stage-test-package
 
   - name: create-deploy-test-bundle
     description: Test and validate cluster is deployed with Minio Operator
@@ -42,7 +46,7 @@ tasks:
       # temp solution to test both sidecar and ambient modes TODO: Remove in future release
       - task: deploy:test-bundle
         with:
-          config: "bundle/uds-config-sidecar.yaml"
+          next_config: "bundle/config-sidecar.uds.hcl"
         if: ${{ eq .variables.ISTIO_MODE "sidecar" }}
       - task: deploy:test-bundle
         if: ${{ eq .variables.ISTIO_MODE "ambient" }}
@@ -74,6 +78,7 @@ tasks:
       - task: deploy:test-bundle
         with:
           config: "bundle/uds-config-sidecar.yaml"
+          next_config: "bundle/config-sidecar.uds.hcl"
         if: ${{ eq .variables.ISTIO_MODE "sidecar" }}
       - task: deploy:test-bundle
         if: ${{ eq .variables.ISTIO_MODE "ambient" }}
@@ -85,6 +90,7 @@ tasks:
     actions:
       - task: actions:determine-arch
       - task: create:package
+      - task: release:stage-test-package
       - task: setup:k3d-test-cluster
       - task: create-deploy-test-bundle
       - description: Publish the package
