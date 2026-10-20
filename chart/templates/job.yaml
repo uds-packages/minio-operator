@@ -40,7 +40,7 @@ spec:
             mc admin policy attach myminio {{ .name }}-policy --user $USER || echo Skipping user attachment;
         env:
         - name: MINIO_SERVER
-          value: "http://uds-minio-hl.minio.svc.cluster.local:9000"
+          value: "http://{{ $.Values.name }}.minio.svc.cluster.local:80"
         - name: MC_CONFIG_DIR
           value: "/tmp/mc/"
         - name: USER
