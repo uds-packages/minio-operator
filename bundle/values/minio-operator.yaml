@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later OR LicenseRef-Defense-Unicorns-Commercial
 
 uds-minio-config:
-  ambient: {{ .vars.minio_operator.ambient }}
+  ambient: {{.vars.minio_operator.ambient}}
   operatorAdditionalNetworkAllow:
     - direction: Ingress
       selector:
