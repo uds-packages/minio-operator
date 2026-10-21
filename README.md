@@ -6,6 +6,8 @@
 
 This package is designed for use as part of a [UDS Bundle](https://docs.defenseunicorns.com/core/concepts/configuration--packaging/bundles/) deployed on [UDS Core](https://github.com/defenseunicorns/uds-core).
 
+The [Next mode test bundle](bundle/bundle.uds.hcl) shows how this package is deployed and configured in CI.
+
 > The MinIO Operator simplifies the deployment and management of MinIO object storage clusters on Kubernetes. It automates the provisioning, scaling, and maintenance of MinIO instances, ensuring high availability and performance.
 
 ## Prerequisites
