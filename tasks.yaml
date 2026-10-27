@@ -3,7 +3,6 @@
 
 includes:
   - test: ./tasks/test.yaml
-  - release: ./tasks/release.yaml
   - create: https://raw.githubusercontent.com/defenseunicorns/uds-common/v1.32.1/tasks/create.yaml
   - publish: https://raw.githubusercontent.com/defenseunicorns/uds-common/v1.32.1/tasks/publish.yaml
   - lint: https://raw.githubusercontent.com/defenseunicorns/uds-common/v1.32.1/tasks/lint.yaml
@@ -37,7 +36,6 @@ tasks:
       - task: create:package
         with:
           options: "--skip-sbom"
-      - task: release:stage-test-package
 
   - name: create-deploy-test-bundle
     description: Test and validate cluster is deployed with Minio Operator
@@ -90,7 +88,6 @@ tasks:
     actions:
       - task: actions:determine-arch
       - task: create:package
-      - task: release:stage-test-package
       - task: setup:k3d-test-cluster
       - task: create-deploy-test-bundle
       - description: Publish the package
