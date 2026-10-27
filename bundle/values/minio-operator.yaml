@@ -1,0 +1,46 @@
+# Copyright 2026 Defense Unicorns
+# SPDX-License-Identifier: AGPL-3.0-or-later OR LicenseRef-Defense-Unicorns-Commercial
+
+uds-minio-config:
+  ambient: {{.vars.minio_operator.ambient}}
+  operatorAdditionalNetworkAllow:
+    - direction: Ingress
+      selector:
+        app.kubernetes.io/name: operator
+      remoteNamespace: "*"
+      port: 4221
+      description: MinIO tenant access to the operator update service
+  apps:
+    - name: mc-cli-test
+      namespace: mc-cli
+      remoteSelector:
+        job-name: minio-test-job
+      bucketNames:
+        - mc-cli-test-bucket
+      copyPassword:
+        enabled: true
+        secretName: ""
+        secretIDKey: ""
+        secretPasswordKey: ""
+    - name: mc-cli-policy
+      namespace: mc-cli
+      remoteSelector:
+        job-name: minio-policy-job
+      bucketNames:
+        - mc-cli-policy-bucket
+      policy: |
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": ["s3:ListBucket"],
+              "Resource": ["arn:aws:s3:::mc-cli-policy-bucket"]
+            }
+          ]
+        }
+      copyPassword:
+        enabled: true
+        secretName: ""
+        secretIDKey: ""
+        secretPasswordKey: ""
