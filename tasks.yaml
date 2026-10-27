@@ -15,6 +15,8 @@ includes:
 
 # Temporarily expose istio mode for testing both sidecar and ambient modes TODO: Remove in future release
 variables:
+  - name: NEXT_MODE
+    default: "true"
   - name: ISTIO_MODE
     description: "The Istio mode to use for the test"
     default: ambient
@@ -42,7 +44,7 @@ tasks:
       # temp solution to test both sidecar and ambient modes TODO: Remove in future release
       - task: deploy:test-bundle
         with:
-          config: "bundle/uds-config-sidecar.yaml"
+          next_config: "bundle/config-sidecar.uds.hcl"
         if: ${{ eq .variables.ISTIO_MODE "sidecar" }}
       - task: deploy:test-bundle
         if: ${{ eq .variables.ISTIO_MODE "ambient" }}
@@ -74,6 +76,7 @@ tasks:
       - task: deploy:test-bundle
         with:
           config: "bundle/uds-config-sidecar.yaml"
+          next_config: "bundle/config-sidecar.uds.hcl"
         if: ${{ eq .variables.ISTIO_MODE "sidecar" }}
       - task: deploy:test-bundle
         if: ${{ eq .variables.ISTIO_MODE "ambient" }}
