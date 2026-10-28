@@ -1,8 +1,0 @@
-# Copyright 2024 Defense Unicorns
-# SPDX-License-Identifier: AGPL-3.0-or-later OR LicenseRef-Defense-Unicorns-Commercial
-
-# This config tempoarily exists while we test the sidecar mode of Istio in addition to ambient mode.
-# Once we are done testing, this file will be removed. TODO: Remove this file once sidecar mode is deprecated.
-variables:
-  minio-operator:
-    ambient: false
