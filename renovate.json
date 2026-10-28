@@ -22,8 +22,8 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": [
-        "(^|/)tests/.+/zarf\\.yaml$"
+      "managerFilePatterns": [
+        "/(^|/)tests/.+/zarf\\.yaml$/"
       ],
       "matchStrings": [
         "- ['\"]?(?<depName>[^\"'\\s]+):(?<currentValue>[^\"'\\s]+)['\"]?( # renovate:( versioning=(?<versioning>.*?))?( extractVersion=(?<extractVersion>.*?))?)?(\\s|$)"
