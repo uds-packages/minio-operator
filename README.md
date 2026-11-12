@@ -18,6 +18,29 @@ This package requires a Kubernetes Cluster providing a Storage Class that has [U
 
 The released packages can be found in [ghcr](https://github.com/uds-packages/minio-operator/pkgs/container/minio-operator).
 
+### Verify a Package
+
+Packages are signed using [Zarf's Keyless Signing](https://docs.zarf.dev/ref/package-signing/#using-keyless-signing).
+
+Packages are signed from the following versions onwards:
+
+| Flavor | First Signed Version |
+| --- | --- |
+| `upstream` | `7.1.1-uds.29` |
+| `registry1` | `7.1.1-uds.30` |
+| `unicorn` | `7.1.1-uds.28` |
+
+To verify a package, follow the below example:
+
+```bash
+uds zarf package verify "oci://ghcr.io/uds-packages/minio-operator:7.1.1-uds.29-upstream" \
+  --certificate-identity "https://github.com/uds-packages/minio-operator/.github/workflows/release.yaml@refs/heads/main" \
+  --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
+```
+
+For a `unicorn` package, use `oci://ghcr.io/uds-packages/private/minio-operator:<VERSION>-unicorn`
+as the package source.
+
 ## UDS Tasks (for local dev and CI)
 
 *For local dev, this requires you install [uds-cli](https://github.com/defenseunicorns/uds-cli?tab=readme-ov-file#install)
