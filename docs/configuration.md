@@ -2,6 +2,49 @@
 
 Minio is configured through the upstream [Minio Operator and Tenant charts](https://github.com/minio/operator/tree/master/helm) as well as a UDS configuration chart that supports the following:
 
+## Table of Contents
+
+- [Package Signature Verification](#package-signature-verification)
+- [Networking](#networking)
+- [Storage Pools](#storage-pools)
+- [Exposing MinIO storage pool parameters for deploy-time overrides](#exposing-minio-storage-pool-parameters-for-deploy-time-overrides)
+- [Resource Provisioning](#resource-provisioning)
+- [Cross-Namespace Password](#cross-namespace-password)
+- [SSO](#sso)
+- [Network Encryption](#network-encryption)
+- [Volume Encryption](#volume-encryption)
+
+## Package Signature Verification
+
+See [Verify a Package](../README.md#verify-a-package) in the README for the first signed releases and package source paths. Replace `<version>` and `<flavor>` with your package version and flavor. For signed releases, configure the settings below to avoid signature verification failures during bundle creation.
+
+### CLI Next — `bundle.uds.hcl`
+
+```hcl
+package "minio-operator" {
+  source = "oci://ghcr.io/uds-packages/minio-operator:<version>-<flavor>"
+
+  signature_verification {
+    keyless {
+      certificate_identity    = "https://github.com/uds-packages/minio-operator/.github/workflows/release.yaml@refs/heads/main"
+      certificate_oidc_issuer = "https://token.actions.githubusercontent.com"
+    }
+  }
+}
+```
+
+### Classic — `uds-bundle.yaml`
+
+```yaml
+packages:
+  - name: minio-operator
+    repository: ghcr.io/uds-packages/minio-operator
+    ref: <version>-<flavor>
+    keylessVerification:
+      certificateIdentity: https://github.com/uds-packages/minio-operator/.github/workflows/release.yaml@refs/heads/main
+      certificateOIDCIssuer: https://token.actions.githubusercontent.com
+```
+
 ## Networking
 
 Network policies are controlled via the `uds-minio-config` chart and follow [similar networking patterns as the Reference Package](https://github.com/uds-packages/reference-package/blob/main/docs/networking-patterns.md).
